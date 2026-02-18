@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Brain, Menu, X } from 'lucide-react';
+import { Brain, Calendar, Menu, X } from 'lucide-react';
+
+const CALENDLY_URL = 'https://calendly.com/goldendragon0830-hightech/30min';
 
 interface HeaderProps {
   currentPage: string;
@@ -56,7 +58,17 @@ export default function Header({ currentPage, onNavigate }: HeaderProps) {
             ))}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-blue-200 text-blue-600 hover:bg-blue-50"
+              asChild
+            >
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                <Calendar className="mr-1.5 h-4 w-4" /> Schedule a Call
+              </a>
+            </Button>
             <Button
               onClick={() => handleNav('contact')}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
@@ -89,7 +101,16 @@ export default function Header({ currentPage, onNavigate }: HeaderProps) {
               </button>
             ))}
             <Button
-              className="w-full mt-4 bg-gradient-to-r from-blue-600 to-indigo-600"
+              className="w-full mt-2 border-blue-200 text-blue-600"
+              variant="outline"
+              asChild
+            >
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                <Calendar className="mr-1.5 h-4 w-4" /> Schedule a Call
+              </a>
+            </Button>
+            <Button
+              className="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600"
               onClick={() => handleNav('contact')}
             >
               Get Started

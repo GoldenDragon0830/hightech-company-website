@@ -1,17 +1,25 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   ArrowRight,
-  Building2,
+  BarChart3,
+  Brain,
+  Calendar,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   Factory,
   GraduationCap,
-  Heart,
+  HeartPulse,
+  ShieldCheck,
   ShoppingCart,
   Truck,
-  Zap,
 } from 'lucide-react';
+import { useScrollAnimation, useStaggerAnimation } from '@/hooks/use-scroll-animation';
+
+const CALENDLY_URL = 'https://calendly.com/goldendragon0830-hightech/30min';
 
 interface IndustriesPageProps {
   onNavigate: (page: string) => void;
@@ -20,381 +28,251 @@ interface IndustriesPageProps {
 const industries = [
   {
     id: 'healthcare',
-    icon: Heart,
+    icon: HeartPulse,
     title: 'Healthcare & Life Sciences',
-    color: 'red',
-    heroDescription: 'Revolutionizing patient care and medical research through AI-powered diagnostics, drug discovery, and personalized medicine solutions.',
-    challenges: [
-      'Increasing volume of medical imaging data',
-      'Need for faster and more accurate diagnoses',
-      'Drug discovery timelines exceeding 10+ years',
-      'Rising healthcare costs and inefficiencies',
-    ],
-    solutions: [
-      {
-        title: 'AI-Powered Medical Imaging',
-        description: 'Computer vision models that detect anomalies in X-rays, MRIs, and CT scans with 99%+ accuracy, reducing radiologist workload by 40%.',
-      },
-      {
-        title: 'Clinical Decision Support',
-        description: 'ML systems that analyze patient data to recommend treatments, predict outcomes, and identify high-risk patients proactively.',
-      },
-      {
-        title: 'Drug Discovery Acceleration',
-        description: 'AI-driven molecular modeling and compound screening that reduces drug discovery timelines by 60%.',
-      },
-      {
-        title: 'Patient Flow Optimization',
-        description: 'Predictive models for hospital admission forecasting, bed management, and staff scheduling optimization.',
-      },
-    ],
-    stats: [
-      { value: '99.2%', label: 'Diagnostic Accuracy' },
-      { value: '40%', label: 'Faster Diagnoses' },
-      { value: '60%', label: 'Reduced Discovery Time' },
-    ],
-    caseStudy: 'Helped a major hospital network reduce misdiagnosis rates by 35% using our AI imaging platform, processing over 2M scans annually.',
+    color: 'from-rose-500 to-pink-600',
+    lightBg: 'bg-rose-50',
+    iconColor: 'text-rose-600',
+    description: 'AI-driven diagnostics, drug discovery, and patient care optimization that save lives and reduce costs.',
+    challenges: ['Diagnostic accuracy at scale', 'Patient data privacy & compliance', 'Operational cost management', 'Drug development timelines'],
+    solutions: ['AI-powered medical imaging analysis', 'HIPAA-compliant data platforms', 'Predictive patient flow optimization', 'Accelerated discovery pipelines with ML'],
+    stats: [{ value: '99.2%', label: 'Diagnostic accuracy' }, { value: '40%', label: 'Faster diagnoses' }, { value: '2M+', label: 'Scans processed' }],
+    caseStudy: { title: 'MediScan AI', result: 'Reduced diagnostic errors by 35% and cut radiologist workload by 40%' },
   },
   {
     id: 'ecommerce',
     icon: ShoppingCart,
     title: 'E-Commerce & Retail',
-    color: 'orange',
-    heroDescription: 'Transforming online and offline retail experiences with personalized recommendations, demand forecasting, and intelligent supply chain management.',
-    challenges: [
-      'Increasing customer expectations for personalization',
-      'Inventory management and demand uncertainty',
-      'Cart abandonment exceeding 70%',
-      'Intense competition and shrinking margins',
-    ],
-    solutions: [
-      {
-        title: 'Personalized Recommendations',
-        description: 'Deep learning recommendation engines that increase average order value by 25-45% through hyper-personalized product suggestions.',
-      },
-      {
-        title: 'Demand Forecasting',
-        description: 'Time-series ML models that predict demand with 95% accuracy, reducing stockouts by 50% and overstock by 30%.',
-      },
-      {
-        title: 'Dynamic Pricing',
-        description: 'Real-time pricing optimization engines that maximize revenue while maintaining competitive positioning.',
-      },
-      {
-        title: 'Customer Analytics',
-        description: 'Cohort analysis, churn prediction, and lifetime value modeling for data-driven marketing strategies.',
-      },
-    ],
-    stats: [
-      { value: '+45%', label: 'Revenue Increase' },
-      { value: '95%', label: 'Forecast Accuracy' },
-      { value: '50%', label: 'Fewer Stockouts' },
-    ],
-    caseStudy: 'Built a recommendation engine for a mid-size retailer that increased average order value by 32% and reduced cart abandonment by 18%.',
+    color: 'from-violet-500 to-purple-600',
+    lightBg: 'bg-violet-50',
+    iconColor: 'text-violet-600',
+    description: 'Personalization engines and analytics platforms that drive conversions and customer loyalty.',
+    challenges: ['High cart abandonment rates', 'Generic shopping experiences', 'Demand forecasting accuracy', 'Customer retention'],
+    solutions: ['Real-time recommendation engines', 'Behavioral analytics platforms', 'ML-powered demand forecasting', 'CLV prediction & segmentation'],
+    stats: [{ value: '+45%', label: 'AOV increase' }, { value: '-18%', label: 'Cart abandonment' }, { value: '95%', label: 'Forecast accuracy' }],
+    caseStudy: { title: 'ShopSmart Analytics', result: 'Increased average order value by 45% and reduced cart abandonment by 18%' },
   },
   {
     id: 'finance',
-    icon: Building2,
-    title: 'Financial Services',
-    color: 'green',
-    heroDescription: 'Securing financial institutions and enhancing operations with real-time fraud detection, risk assessment, and automated compliance solutions.',
-    challenges: [
-      'Sophisticated fraud attacks growing 25% annually',
-      'Complex regulatory compliance requirements',
-      'Manual processes in underwriting and risk assessment',
-      'Need for real-time transaction monitoring',
-    ],
-    solutions: [
-      {
-        title: 'Fraud Detection',
-        description: 'Real-time ML models processing 10M+ transactions daily, detecting fraudulent activity with 99.7% accuracy and 0.01% false positive rate.',
-      },
-      {
-        title: 'Credit Risk Assessment',
-        description: 'AI-powered credit scoring models that evaluate 500+ data points for more accurate risk assessment and faster approvals.',
-      },
-      {
-        title: 'Regulatory Compliance',
-        description: 'Automated compliance monitoring with NLP-powered document analysis and real-time regulatory change tracking.',
-      },
-      {
-        title: 'Algorithmic Trading',
-        description: 'Quantitative trading models with real-time market analysis, sentiment tracking, and automated execution.',
-      },
-    ],
-    stats: [
-      { value: '99.7%', label: 'Fraud Detection Rate' },
-      { value: '10M+', label: 'Daily Transactions' },
-      { value: '$50M+', label: 'Savings Generated' },
-    ],
-    caseStudy: 'Deployed a fraud detection system for a top-20 bank that prevents $50M+ in fraudulent transactions annually while reducing false positives by 80%.',
+    icon: ShieldCheck,
+    title: 'Finance & Banking',
+    color: 'from-emerald-500 to-green-600',
+    lightBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    description: 'Fraud detection, risk assessment, and compliance automation for financial institutions.',
+    challenges: ['Sophisticated fraud schemes', 'Regulatory compliance burden', 'False-positive avalanche', 'Real-time processing at scale'],
+    solutions: ['Multi-layer fraud detection AI', 'Automated compliance monitoring', 'Graph-based anomaly detection', 'Sub-50ms transaction scoring'],
+    stats: [{ value: '99.7%', label: 'Fraud detection' }, { value: '$50M+', label: 'Fraud prevented' }, { value: '0.01%', label: 'False positive rate' }],
+    caseStudy: { title: 'FinGuard Pro', result: 'Detected 99.7% of fraudulent activity while cutting false positives to 0.01%' },
   },
   {
     id: 'education',
     icon: GraduationCap,
     title: 'Education & EdTech',
-    color: 'blue',
-    heroDescription: 'Reimagining learning experiences with adaptive platforms, automated assessment, and data-driven student success tools.',
-    challenges: [
-      'One-size-fits-all curriculum failing diverse learners',
-      'Overburdened teachers with grading workloads',
-      'Difficulty identifying at-risk students early',
-      'Limited personalization at scale',
-    ],
-    solutions: [
-      {
-        title: 'Adaptive Learning Platforms',
-        description: 'AI-driven content delivery that adjusts difficulty, pacing, and style based on individual student performance and learning patterns.',
-      },
-      {
-        title: 'Automated Grading & Feedback',
-        description: 'NLP-powered essay grading and personalized feedback generation, reducing teacher grading time by 70%.',
-      },
-      {
-        title: 'Student Success Prediction',
-        description: 'Early warning systems that identify at-risk students using behavioral and academic data with 90% accuracy.',
-      },
-      {
-        title: 'Intelligent Tutoring',
-        description: 'AI tutoring assistants that provide personalized explanations, practice problems, and learning path recommendations.',
-      },
-    ],
-    stats: [
-      { value: '+30%', label: 'Learning Improvement' },
-      { value: '70%', label: 'Less Grading Time' },
-      { value: '90%', label: 'At-Risk Detection' },
-    ],
-    caseStudy: 'Developed an adaptive learning platform for a university system serving 50,000 students, improving course completion rates by 25%.',
+    color: 'from-blue-500 to-cyan-600',
+    lightBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    description: 'Adaptive learning platforms and analytics that improve outcomes and engagement.',
+    challenges: ['High student drop-out rates', 'One-size-fits-all content', 'Late identification of at-risk students', 'Engagement tracking'],
+    solutions: ['Reinforcement-learning adaptive paths', 'Knowledge graph content delivery', 'Early warning ML models', 'Real-time engagement analytics'],
+    stats: [{ value: '+25%', label: 'Completion rate' }, { value: '-20%', label: 'Drop-out reduction' }, { value: '50K+', label: 'Students served' }],
+    caseStudy: { title: 'EduPath AI', result: 'Improved course completion by 25% and reduced drop-outs by 20%' },
   },
   {
     id: 'manufacturing',
     icon: Factory,
-    title: 'Manufacturing',
-    color: 'amber',
-    heroDescription: 'Optimizing production lines and supply chains with predictive maintenance, quality control automation, and intelligent resource planning.',
-    challenges: [
-      'Unplanned downtime costing millions annually',
-      'Quality defects increasing warranty costs',
-      'Complex supply chain dependencies',
-      'Labor shortages in skilled positions',
-    ],
-    solutions: [
-      {
-        title: 'Predictive Maintenance',
-        description: 'IoT + ML models that predict equipment failures 2-4 weeks in advance, reducing unplanned downtime by 70%.',
-      },
-      {
-        title: 'Automated Quality Control',
-        description: 'Computer vision inspection systems that detect defects with 99.5% accuracy at production line speed.',
-      },
-      {
-        title: 'Supply Chain Optimization',
-        description: 'AI-driven demand forecasting and inventory optimization reducing carrying costs by 25% and improving fill rates.',
-      },
-      {
-        title: 'Process Optimization',
-        description: 'Reinforcement learning models that optimize production parameters for maximum efficiency and minimum waste.',
-      },
-    ],
-    stats: [
-      { value: '70%', label: 'Less Downtime' },
-      { value: '99.5%', label: 'Detection Accuracy' },
-      { value: '25%', label: 'Cost Reduction' },
-    ],
-    caseStudy: 'Implemented predictive maintenance for an automotive manufacturer, preventing $12M in annual downtime costs across 8 production lines.',
+    title: 'Manufacturing & Industry 4.0',
+    color: 'from-amber-500 to-orange-600',
+    lightBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+    description: 'Predictive maintenance, quality control, and production optimization for smart factories.',
+    challenges: ['Unplanned machine downtime', 'Quality defect detection', 'Equipment lifecycle management', 'Supply chain forecasting'],
+    solutions: ['IoT-enabled predictive maintenance', 'Computer vision QC inspection', 'Digital twin modeling', 'ML supply chain optimization'],
+    stats: [{ value: '70%', label: 'Less downtime' }, { value: '99.5%', label: 'Defect detection' }, { value: '$12M+', label: 'Savings' }],
+    caseStudy: { title: 'PredictLine', result: 'Eliminated 70% of unplanned downtime and achieved 99.5% defect detection' },
   },
   {
     id: 'logistics',
     icon: Truck,
     title: 'Logistics & Supply Chain',
-    color: 'teal',
-    heroDescription: 'Streamlining operations with route optimization, fleet management, delivery prediction, and warehouse automation solutions.',
-    challenges: [
-      'Rising fuel costs and driver shortages',
-      'Last-mile delivery efficiency',
-      'Warehouse throughput limitations',
-      'Real-time visibility across supply chain',
-    ],
-    solutions: [
-      {
-        title: 'Route Optimization',
-        description: 'AI algorithms processing thousands of variables to find optimal routes, reducing fuel costs by 15-25% and delivery times by 20%.',
-      },
-      {
-        title: 'Fleet Management',
-        description: 'Predictive analytics for vehicle maintenance, driver performance scoring, and fleet utilization optimization.',
-      },
-      {
-        title: 'Warehouse Automation',
-        description: 'AI-powered pick path optimization, inventory placement, and robotic coordination for 40% throughput improvement.',
-      },
-      {
-        title: 'Delivery Prediction',
-        description: 'Customer-facing ETA predictions with 95% accuracy, improving satisfaction and reducing support call volume.',
-      },
-    ],
-    stats: [
-      { value: '25%', label: 'Fuel Savings' },
-      { value: '40%', label: 'More Throughput' },
-      { value: '95%', label: 'ETA Accuracy' },
-    ],
-    caseStudy: 'Built a route optimization platform for a national delivery service, saving $8M annually in fuel costs across 5,000+ vehicles.',
+    color: 'from-sky-500 to-blue-600',
+    lightBg: 'bg-sky-50',
+    iconColor: 'text-sky-600',
+    description: 'Route optimization, fleet management, and supply chain intelligence.',
+    challenges: ['Rising fuel costs', 'Delivery window compliance', 'Fleet utilization inefficiency', 'Last-mile complexity'],
+    solutions: ['Multi-objective route optimization', 'Real-time fleet tracking & analytics', 'Dynamic delivery scheduling', 'ML demand-aware logistics'],
+    stats: [{ value: '25%', label: 'Fuel savings' }, { value: '20%', label: 'Faster delivery' }, { value: '$8M', label: 'Annual savings' }],
+    caseStudy: { title: 'RouteGenius', result: 'Saved 25% on fuel and achieved 95% ETA accuracy using AI route optimization' },
   },
 ];
 
 export default function IndustriesPage({ onNavigate }: IndustriesPageProps) {
+  const [expandedIndustry, setExpandedIndustry] = useState<string | null>(null);
+  const ctaAnim = useScrollAnimation();
+
   return (
     <main>
       {/* Hero */}
-      <section className="relative py-20 md:py-28 bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
+      <section className="relative py-20 md:py-28 bg-gradient-to-br from-slate-50 to-indigo-50 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-0 -left-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
             <Badge variant="outline" className="text-sm px-4 py-1">Industries We Serve</Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              Transforming Industries with{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                AI Solutions
-              </span>
+              AI Solutions Across{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Every Industry</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              We bring deep domain expertise and advanced AI capabilities to solve the most
-              critical challenges across multiple industries.
+              We bring deep domain expertise and cutting-edge AI to solve the toughest challenges across six key industry verticals.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Industry Quick Nav */}
-      <section className="py-12 border-b">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-3">
-            {industries.map((industry) => (
-              <a
-                key={industry.id}
-                href={`#industry-${industry.id}`}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border hover:border-blue-300 hover:bg-blue-50 transition-all text-sm font-medium"
-              >
-                <industry.icon className="h-4 w-4 text-blue-600" />
-                {industry.title.split(' & ')[0]}
-              </a>
-            ))}
-          </div>
+      {/* Industry Cards */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          {industries.map((industry) => (
+            <IndustryCard key={industry.id} industry={industry} expanded={expandedIndustry === industry.id} onToggle={() => setExpandedIndustry(expandedIndustry === industry.id ? null : industry.id)} onNavigate={onNavigate} />
+          ))}
         </div>
       </section>
 
-      {/* Detailed Industry Sections */}
-      {industries.map((industry, index) => (
-        <section
-          key={industry.id}
-          id={`industry-${industry.id}`}
-          className={`py-24 ${index % 2 === 0 ? 'bg-muted/30' : ''}`}
-        >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Industry Header */}
-            <div className="max-w-3xl mb-16">
-              <Badge variant="outline" className="text-sm px-4 py-1 mb-4">
-                <industry.icon className="h-3 w-3 mr-1" />
-                {industry.title}
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">{industry.title}</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                {industry.heroDescription}
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mb-16">
-              {industry.stats.map((stat, i) => (
-                <div key={i} className="text-center p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border">
-                  <p className="text-3xl md:text-4xl font-bold text-blue-600">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Challenges & Solutions */}
-            <div className="grid lg:grid-cols-2 gap-12 mb-16">
-              {/* Challenges */}
-              <div>
-                <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-amber-500" />
-                  Industry Challenges
-                </h3>
-                <div className="space-y-4">
-                  {industry.challenges.map((challenge, i) => (
-                    <div key={i} className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 border border-amber-100">
-                      <span className="text-amber-600 font-bold text-sm mt-0.5">{String(i + 1).padStart(2, '0')}</span>
-                      <p className="text-sm text-amber-900">{challenge}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Solutions */}
-              <div>
-                <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Our Solutions
-                </h3>
-                <div className="space-y-4">
-                  {industry.solutions.map((solution, i) => (
-                    <Card key={i} className="hover:shadow-md transition-shadow">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base">{solution.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{solution.description}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Case Study */}
-            <div className="p-8 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div className="space-y-2 max-w-2xl">
-                  <Badge className="bg-white/20 text-white border-white/30">Case Study</Badge>
-                  <p className="text-lg leading-relaxed">{industry.caseStudy}</p>
-                </div>
-                <Button
-                  className="bg-white text-blue-600 hover:bg-blue-50 flex-shrink-0"
-                  onClick={() => onNavigate('projects')}
-                >
-                  View Projects <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
+      {/* Cross-Industry Differentiators */}
+      <CrossIndustrySection />
 
       {/* CTA */}
-      <section className="py-24">
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl md:text-5xl font-bold">
-              Don't See Your Industry?
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              We work across many more sectors. Our AI expertise is adaptable to any domain.
-              Let's discuss your specific industry challenges.
-            </p>
-            <Button
-              size="lg"
-              className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600"
-              onClick={() => onNavigate('contact')}
-            >
-              Discuss Your Industry <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+          <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
+            <h2 className="text-3xl md:text-5xl font-bold">Don't See Your Industry?</h2>
+            <p className="text-xl text-blue-200 max-w-2xl mx-auto">Our AI expertise transcends verticals. Let's discuss your unique challenges and build a custom solution tailored to your domain.</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="text-lg bg-white text-blue-900 hover:bg-blue-50" asChild>
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                  <Calendar className="mr-2 h-5 w-5" /> Schedule a Call
+                </a>
+              </Button>
+              <Button size="lg" variant="outline" className="text-lg border-blue-400 text-blue-100 hover:bg-blue-500/20" onClick={() => onNavigate('projects')}>
+                View Our Projects <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </section>
     </main>
+  );
+}
+
+function IndustryCard({ industry, expanded, onToggle, onNavigate }: { industry: typeof industries[0]; expanded: boolean; onToggle: () => void; onNavigate: (page: string) => void }) {
+  const cardAnim = useScrollAnimation();
+  const Icon = industry.icon;
+
+  return (
+    <Card ref={cardAnim.ref} className={`overflow-hidden transition-all duration-300 scroll-hidden ${cardAnim.isVisible ? 'scroll-visible' : ''} ${expanded ? 'shadow-2xl ring-2 ring-blue-200' : 'hover:shadow-xl'}`}>
+      <div className="cursor-pointer p-8" onClick={onToggle}>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="flex items-start gap-5">
+            <div className={`w-14 h-14 rounded-xl ${industry.lightBg} flex items-center justify-center flex-shrink-0`}>
+              <Icon className={`h-7 w-7 ${industry.iconColor}`} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold mb-1">{industry.title}</h3>
+              <p className="text-muted-foreground max-w-xl leading-relaxed">{industry.description}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="hidden lg:flex gap-6">
+              {industry.stats.map((s, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-xl font-bold text-blue-600">{s.value}</p>
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex-shrink-0">
+              {expanded ? <ChevronUp className="h-5 w-5 text-muted-foreground" /> : <ChevronDown className="h-5 w-5 text-muted-foreground" />}
+            </div>
+          </div>
+        </div>
+      </div>
+      {expanded && (
+        <div className="border-t animate-in slide-in-from-top-2 duration-300">
+          <div className="p-8 space-y-8">
+            <div className="lg:hidden grid grid-cols-3 gap-4">
+              {industry.stats.map((s, i) => (
+                <div key={i} className="text-center p-3 rounded-lg bg-blue-50">
+                  <p className="text-xl font-bold text-blue-600">{s.value}</p>
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2"><span className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center"><BarChart3 className="h-4 w-4 text-amber-600" /></span> Industry Challenges</h4>
+                <ul className="space-y-3">
+                  {industry.challenges.map((c, i) => (
+                    <li key={i} className="flex items-start gap-2 text-muted-foreground"><span className="h-2 w-2 bg-amber-400 rounded-full mt-2 flex-shrink-0" />{c}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2"><span className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center"><CheckCircle2 className="h-4 w-4 text-green-600" /></span> Our Solutions</h4>
+                <ul className="space-y-3">
+                  {industry.solutions.map((s, i) => (
+                    <li key={i} className="flex items-start gap-2 text-muted-foreground"><CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />{s}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border">
+              <h4 className="font-semibold mb-2">Featured: {industry.caseStudy.title}</h4>
+              <p className="text-muted-foreground">{industry.caseStudy.result}</p>
+              <Button variant="link" className="mt-2 p-0 text-blue-600" onClick={() => onNavigate('projects')}>
+                View Full Case Study <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function CrossIndustrySection() {
+  const sectionAnim = useScrollAnimation();
+  const stagger = useStaggerAnimation(4);
+
+  const differentiators = [
+    { icon: Brain, title: 'Domain Expertise', description: 'Our teams include subject-matter experts from each industry who understand the nuances of your business.' },
+    { icon: ShieldCheck, title: 'Compliance First', description: 'We build with security, privacy, and regulatory compliance baked in from day one — HIPAA, SOC 2, PCI-DSS.' },
+    { icon: BarChart3, title: 'Measurable Outcomes', description: 'Every project is scoped around clear KPIs with transparent tracking from kickoff to deployment.' },
+    { icon: Factory, title: 'Production-Ready AI', description: 'Our solutions go beyond proof-of-concept — we deliver scalable, production-grade systems.' },
+  ];
+
+  return (
+    <section className="py-16 bg-muted/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div ref={sectionAnim.ref} className={`text-center mb-12 scroll-hidden ${sectionAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Teams Choose Us Across Industries</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Regardless of your vertical, our approach delivers results.</p>
+        </div>
+        <div ref={stagger.containerRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {differentiators.map((d, i) => {
+            const Icon = d.icon;
+            return (
+              <Card key={i} className={`p-6 text-center hover-lift stagger-item ${stagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mx-auto mb-4"><Icon className="h-6 w-6 text-blue-600" /></div>
+                <h3 className="font-semibold mb-2">{d.title}</h3>
+                <p className="text-sm text-muted-foreground">{d.description}</p>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }

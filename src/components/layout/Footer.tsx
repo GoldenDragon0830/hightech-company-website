@@ -1,5 +1,8 @@
 import { Separator } from '@/components/ui/separator';
-import { Brain, Github, Linkedin, Twitter, Mail, MapPin, Phone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Brain, Calendar, Github, Linkedin, Twitter, Mail, MapPin, Phone } from 'lucide-react';
+
+const CALENDLY_URL = 'https://calendly.com/goldendragon0830-hightech/30min';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
@@ -100,13 +103,18 @@ export default function Footer({ onNavigate }: FooterProps) {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-blue-400" />
-                +1 (302) 555-0142
+                +1 (540) 952-9270
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-blue-400 mt-0.5" />
                 24 East Clairmont Drive, Newark, DE 19702
               </li>
             </ul>
+            <Button size="sm" className="mt-4 bg-blue-600 hover:bg-blue-700 text-white" asChild>
+              <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                <Calendar className="mr-1.5 h-4 w-4" /> Schedule a Call
+              </a>
+            </Button>
           </div>
         </div>
 
