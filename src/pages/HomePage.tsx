@@ -1,0 +1,573 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  ArrowRight,
+  Brain,
+  Globe,
+  Smartphone,
+  Zap,
+  Users,
+  Target,
+  TrendingUp,
+  Award,
+  CheckCircle2,
+  Star,
+  Briefcase,
+  ChevronRight,
+  Code2,
+  Cpu,
+  BarChart3,
+  Shield,
+  Sparkles,
+} from 'lucide-react';
+
+interface HomePageProps {
+  onNavigate: (page: string) => void;
+}
+
+export default function HomePage({ onNavigate }: HomePageProps) {
+  return (
+    <main>
+      {/* Hero Section */}
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute top-20 -left-20 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl animate-float-delayed" />
+          <div className="absolute bottom-10 right-1/4 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl animate-float-slow" />
+          {/* Grid pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLW9wYWNpdHk9IjAuMDMiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-50" />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8 animate-fade-in-up">
+              <div className="flex gap-2">
+                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-1">
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  AI-Powered Solutions
+                </Badge>
+                <Badge variant="outline" className="px-4 py-1">
+                  Since 2020
+                </Badge>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+                Transform Your Business with{' '}
+                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent animate-gradient">
+                  AI Innovation
+                </span>
+              </h1>
+              <p className="text-xl text-muted-foreground leading-relaxed max-w-xl">
+                HighTech delivers cutting-edge AI solutions for web and mobile platforms,
+                empowering businesses across industries to achieve breakthrough results.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  size="lg"
+                  className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-600/25"
+                  onClick={() => onNavigate('services')}
+                >
+                  Explore Solutions <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg"
+                  onClick={() => onNavigate('contact')}
+                >
+                  Contact Us
+                </Button>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="flex items-center gap-6 pt-4">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 border-2 border-white flex items-center justify-center text-white text-xs font-bold"
+                    >
+                      {String.fromCharCode(64 + i)}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground">Trusted by 200+ companies</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative animate-fade-in-right">
+              <div className="relative z-10">
+                <img
+                  src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="AI Technology"
+                  className="rounded-2xl shadow-2xl"
+                />
+              </div>
+              {/* Floating cards */}
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-4 animate-float-slow z-20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">Revenue Growth</p>
+                    <p className="text-xs text-green-600 font-bold">+147% Average</p>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-xl p-4 animate-float z-20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Brain className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">AI Models</p>
+                    <p className="text-xs text-blue-600 font-bold">50+ Deployed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { value: '200+', label: 'Clients Worldwide', icon: Users },
+              { value: '500+', label: 'Projects Completed', icon: Target },
+              { value: '98%', label: 'Client Satisfaction', icon: Award },
+              { value: '50+', label: 'AI Models Deployed', icon: Brain },
+            ].map((stat, index) => (
+              <div
+                key={index}
+                className="text-center space-y-2 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <stat.icon className="h-8 w-8 mx-auto mb-2 opacity-80" />
+                <p className="text-4xl md:text-5xl font-bold">{stat.value}</p>
+                <p className="text-blue-100 text-sm md:text-base">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Overview */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
+            <Badge variant="outline" className="text-sm px-4 py-1">Our Services</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              End-to-End AI Solutions
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              From strategy to deployment, we provide comprehensive AI services
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: Globe,
+                title: 'AI Web Development',
+                description: 'Intelligent web apps with ML, NLP, and predictive analytics',
+                color: 'blue',
+              },
+              {
+                icon: Smartphone,
+                title: 'AI Mobile Apps',
+                description: 'Smart mobile experiences with on-device AI and computer vision',
+                color: 'indigo',
+              },
+              {
+                icon: Cpu,
+                title: 'AI Consulting',
+                description: 'Strategic guidance for AI adoption and digital transformation',
+                color: 'purple',
+              },
+              {
+                icon: Code2,
+                title: 'Custom Solutions',
+                description: 'Bespoke AI systems tailored to your unique business needs',
+                color: 'cyan',
+              },
+            ].map((service, index) => (
+              <Card
+                key={index}
+                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 hover:border-blue-200"
+                onClick={() => onNavigate('services')}
+              >
+                <CardHeader className="space-y-4">
+                  <div className={`w-14 h-14 rounded-xl bg-${service.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <service.icon className={`h-7 w-7 text-${service.color}-600`} />
+                  </div>
+                  <CardTitle className="text-lg">{service.title}</CardTitle>
+                  <CardDescription>{service.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Learn more <ChevronRight className="h-4 w-4" />
+                  </span>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects */}
+      <section className="py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-16">
+            <div className="space-y-4">
+              <Badge variant="outline" className="text-sm px-4 py-1">Featured Work</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold">Recent Projects</h2>
+              <p className="text-lg text-muted-foreground max-w-xl">
+                See how we've helped companies transform with AI
+              </p>
+            </div>
+            <Button variant="outline" onClick={() => onNavigate('projects')}>
+              View All Projects <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'MediScan AI',
+                category: 'Healthcare',
+                description: 'AI-powered medical imaging platform that detects anomalies with 99.2% accuracy',
+                image: 'https://images.pexels.com/photos/7089401/pexels-photo-7089401.jpeg?auto=compress&cs=tinysrgb&w=600',
+                tags: ['Computer Vision', 'Deep Learning', 'Healthcare'],
+                result: '99.2% accuracy',
+              },
+              {
+                title: 'ShopSmart Analytics',
+                category: 'E-Commerce',
+                description: 'Predictive analytics engine boosting e-commerce revenue by 45%',
+                image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=600',
+                tags: ['Predictive Analytics', 'ML', 'Retail'],
+                result: '+45% revenue',
+              },
+              {
+                title: 'FinGuard Pro',
+                category: 'Finance',
+                description: 'Real-time fraud detection system processing 10M+ transactions daily',
+                image: 'https://images.pexels.com/photos/7567443/pexels-photo-7567443.jpeg?auto=compress&cs=tinysrgb&w=600',
+                tags: ['Fraud Detection', 'Real-time', 'FinTech'],
+                result: '10M+ txn/day',
+              },
+            ].map((project, index) => (
+              <Card
+                key={index}
+                className="group overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
+                onClick={() => onNavigate('projects')}
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-white/90 text-blue-700 backdrop-blur-sm">
+                      {project.category}
+                    </Badge>
+                  </div>
+                  <div className="absolute bottom-4 right-4">
+                    <Badge className="bg-green-500 text-white">
+                      {project.result}
+                    </Badge>
+                  </div>
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-xl">{project.title}</CardTitle>
+                  <CardDescription className="text-base">{project.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <Badge variant="outline" className="text-sm px-4 py-1">Why HighTech</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold">
+                We Build AI That Actually Works
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Our approach combines deep technical expertise with business acumen to deliver
+                AI solutions that create real, measurable impact.
+              </p>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    icon: Shield,
+                    title: 'Enterprise-Grade Security',
+                    description: 'SOC 2 compliant with end-to-end encryption and data privacy controls',
+                  },
+                  {
+                    icon: BarChart3,
+                    title: 'Measurable ROI',
+                    description: 'Every project includes KPIs and performance tracking dashboards',
+                  },
+                  {
+                    icon: Zap,
+                    title: 'Rapid Deployment',
+                    description: 'From concept to production in weeks, not months, with agile methodology',
+                  },
+                  {
+                    icon: Users,
+                    title: 'Dedicated Support',
+                    description: '24/7 support with dedicated account managers for every client',
+                  },
+                ].map((feature, index) => (
+                  <div key={index} className="flex gap-4 items-start">
+                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg mb-1">{feature.title}</h3>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative">
+              <img
+                src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800"
+                alt="Team collaboration"
+                className="rounded-2xl shadow-xl"
+              />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-600/20 to-transparent" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
+            <Badge variant="outline" className="text-sm px-4 py-1">Testimonials</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold">What Our Clients Say</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "HighTech's AI solution increased our diagnostic accuracy by 40%. Their team's expertise in healthcare AI is unmatched.",
+                name: 'Dr. Sarah Chen',
+                role: 'CTO, MediVision Health',
+                avatar: 'SC',
+              },
+              {
+                quote: "The predictive analytics platform they built transformed our supply chain. We've reduced waste by 60% and improved delivery times significantly.",
+                name: 'Mark Thompson',
+                role: 'VP Operations, GlobalRetail',
+                avatar: 'MT',
+              },
+              {
+                quote: "Working with HighTech was a game-changer. Their fraud detection system saves us millions annually and processes transactions in real-time.",
+                name: 'Lisa Nakamura',
+                role: 'Director of Security, FinanceFirst',
+                avatar: 'LN',
+              },
+            ].map((testimonial, index) => (
+              <Card key={index} className="relative hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center gap-1 mb-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground italic leading-relaxed">"{testimonial.quote}"</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm">{testimonial.name}</p>
+                      <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team Preview */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
+            <Badge variant="outline" className="text-sm px-4 py-1">Our People</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold">Meet the Team Behind the Innovation</h2>
+            <p className="text-lg text-muted-foreground">
+              A diverse group of engineers, researchers, and strategists passionate about AI
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            {[
+              { name: 'Alex Rivera', role: 'CEO & Founder', initials: 'AR' },
+              { name: 'Dr. Maya Patel', role: 'Chief AI Officer', initials: 'MP' },
+              { name: 'James Kim', role: 'VP Engineering', initials: 'JK' },
+              { name: 'Sophie Laurent', role: 'Head of Design', initials: 'SL' },
+            ].map((member, index) => (
+              <div key={index} className="text-center group cursor-pointer" onClick={() => onNavigate('about')}>
+                <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                  {member.initials}
+                </div>
+                <h3 className="font-semibold">{member.name}</h3>
+                <p className="text-sm text-muted-foreground">{member.role}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button variant="outline" size="lg" onClick={() => onNavigate('about')}>
+              Meet the Full Team <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Technology Stack */}
+      <section className="py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
+            <Badge variant="outline" className="text-sm px-4 py-1">Technology</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold">Our Technology Stack</h2>
+            <p className="text-lg text-muted-foreground">
+              We use the latest and most reliable technologies to build scalable solutions
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+            {[
+              'TensorFlow', 'PyTorch', 'React', 'Node.js', 'AWS', 'Docker',
+              'Kubernetes', 'Python', 'TypeScript', 'PostgreSQL', 'Redis', 'GraphQL',
+            ].map((tech, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-center p-4 rounded-xl border-2 hover:border-blue-300 hover:bg-blue-50/50 transition-all text-sm font-medium text-muted-foreground hover:text-blue-600"
+              >
+                {tech}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Career CTA */}
+      <section className="py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-float-delayed" />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <Badge className="bg-blue-500/20 text-blue-200 border-blue-400/30 px-4 py-1">
+              <Briefcase className="h-3 w-3 mr-1" />
+              We're Hiring
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold">
+              Join Our Team of Innovators
+            </h2>
+            <p className="text-xl text-blue-200 max-w-2xl mx-auto">
+              We're looking for talented engineers, researchers, and designers who want to
+              shape the future of AI. Remote-friendly culture with amazing benefits.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="text-lg bg-white text-blue-900 hover:bg-blue-50"
+                onClick={() => onNavigate('careers')}
+              >
+                View Open Positions <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg border-blue-400 text-blue-100 hover:bg-blue-500/20"
+                onClick={() => onNavigate('about')}
+              >
+                Learn About Culture
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-6 pt-4 text-sm text-blue-300">
+              {['Remote Friendly', 'Unlimited PTO', 'Health & Wellness', 'Equity Options', 'Learning Budget'].map(
+                (perk) => (
+                  <span key={perk} className="flex items-center gap-1">
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                    {perk}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <h2 className="text-3xl md:text-5xl font-bold">
+              Ready to Transform Your Business?
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Let's discuss how HighTech can help you leverage AI to achieve your business
+              goals. Our team is ready to bring your vision to life.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-600/25"
+                onClick={() => onNavigate('contact')}
+              >
+                Start a Project <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button size="lg" variant="outline" className="text-lg" onClick={() => onNavigate('services')}>
+                Explore Services
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
