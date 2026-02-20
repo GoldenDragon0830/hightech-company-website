@@ -41,7 +41,9 @@ function App() {
   return (
     <div className="min-h-screen bg-background">
       <Header currentPage={currentPage} onNavigate={handleNavigate} />
-      {renderPage()}
+      <div key={currentPage} className="page-transition">
+        {renderPage()}
+      </div>
       <Footer onNavigate={handleNavigate} />
     </div>
   );

@@ -119,13 +119,13 @@ export default function IndustriesPage({ onNavigate }: IndustriesPageProps) {
           <div className="absolute bottom-0 -left-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-            <Badge variant="outline" className="text-sm px-4 py-1">Industries We Serve</Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <Badge variant="outline" className="text-sm px-4 py-1 animate-hero-badge">Industries We Serve</Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-hero-title">
               AI Solutions Across{' '}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Every Industry</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-hero-subtitle">
               We bring deep domain expertise and cutting-edge AI to solve the toughest challenges across six key industry verticals.
             </p>
           </div>
@@ -145,8 +145,12 @@ export default function IndustriesPage({ onNavigate }: IndustriesPageProps) {
       <CrossIndustrySection />
 
       {/* CTA */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl cta-bg-orb" />
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl cta-bg-orb" />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-5xl font-bold">Don't See Your Industry?</h2>
             <p className="text-xl text-blue-200 max-w-2xl mx-auto">Our AI expertise transcends verticals. Let's discuss your unique challenges and build a custom solution tailored to your domain.</p>
@@ -172,7 +176,7 @@ function IndustryCard({ industry, expanded, onToggle, onNavigate }: { industry: 
   const Icon = industry.icon;
 
   return (
-    <Card ref={cardAnim.ref} className={`overflow-hidden transition-all duration-300 scroll-hidden ${cardAnim.isVisible ? 'scroll-visible' : ''} ${expanded ? 'shadow-2xl ring-2 ring-blue-200' : 'hover:shadow-xl'}`}>
+    <Card ref={cardAnim.ref} className={`overflow-hidden transition-all duration-300 card-shine scroll-hidden-scale ${cardAnim.isVisible ? 'scroll-visible' : ''} ${expanded ? 'shadow-2xl ring-2 ring-blue-200' : 'hover:shadow-xl'}`}>
       <div className="cursor-pointer p-8" onClick={onToggle}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="flex items-start gap-5">
@@ -264,7 +268,7 @@ function CrossIndustrySection() {
           {differentiators.map((d, i) => {
             const Icon = d.icon;
             return (
-              <Card key={i} className={`p-6 text-center hover-lift stagger-item ${stagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+              <Card key={i} className={`p-6 text-center hover-lift card-shine stagger-item ${stagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
                 <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mx-auto mb-4"><Icon className="h-6 w-6 text-blue-600" /></div>
                 <h3 className="font-semibold mb-2">{d.title}</h3>
                 <p className="text-sm text-muted-foreground">{d.description}</p>

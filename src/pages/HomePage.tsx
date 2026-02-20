@@ -23,6 +23,166 @@ import {
 } from 'lucide-react';
 import TechSphere from '@/components/TechSphere';
 import { useScrollAnimation, useStaggerAnimation } from '@/hooks/use-scroll-animation';
+import { useEffect, useRef, useState } from 'react';
+
+// Animated counter hook
+function useAnimatedCounter(target: string, isVisible: boolean, duration = 1500) {
+  const [display, setDisplay] = useState('0');
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    if (!isVisible || hasAnimated.current) return;
+    hasAnimated.current = true;
+
+    const numericPart = parseInt(target.replace(/[^0-9]/g, ''), 10);
+    const suffix = target.replace(/[0-9]/g, '');
+    const startTime = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(eased * numericPart);
+      setDisplay(`${current}${suffix}`);
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [isVisible, target, duration]);
+
+  return display;
+}
+
+// Floating particles component
+function FloatingParticles() {
+  const particles = Array.from({ length: 20 }, (_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+    size: Math.random() * 4 + 1,
+    duration: Math.random() * 6 + 6,
+    delay: Math.random() * 5,
+    driftX: (Math.random() - 0.5) * 150,
+    driftY: -(Math.random() * 200 + 100),
+    color: ['rgba(99,102,241,0.3)', 'rgba(6,182,212,0.25)', 'rgba(59,130,246,0.3)', 'rgba(139,92,246,0.25)'][Math.floor(Math.random() * 4)],
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map(p => (
+        <div
+          key={p.id}
+          className="floating-particle"
+          style={{
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
+            background: p.color,
+            '--drift-x': `${p.driftX}px`,
+            '--drift-y': `${p.driftY}px`,
+            '--particle-duration': `${p.duration}s`,
+            '--particle-delay': `${p.delay}s`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Multi-image gallery component with auto-rotation
+const galleryImages = [
+  { src: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Team collaboration' },
+  { src: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Innovation workshop' },
+  { src: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Team meeting' },
+  { src: 'https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Engineering at work' },
+];
+
+function ImageGallery() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const resetAutoPlay = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setActiveIndex(prev => (prev + 1) % galleryImages.length);
+    }, 4000);
+  };
+
+  useEffect(() => {
+    resetAutoPlay();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, []);
+
+  const goTo = (index: number) => {
+    setActiveIndex(index);
+    resetAutoPlay();
+  };
+
+  const goPrev = () => goTo((activeIndex - 1 + galleryImages.length) % galleryImages.length);
+  const goNext = () => goTo((activeIndex + 1) % galleryImages.length);
+
+  return (
+    <>
+      {/* Sliding track */}
+      <div
+        className="image-gallery-track"
+        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+      >
+        {galleryImages.map((img, i) => (
+          <div key={i} className="image-gallery-slide" style={{ minHeight: '400px' }}>
+            <img
+              src={img.src}
+              alt={img.alt}
+              className="rounded-2xl shadow-xl"
+              style={{ minHeight: '400px' }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-600/20 to-transparent pointer-events-none" />
+
+      {/* Arrow buttons */}
+      <button className="gallery-arrow left" onClick={goPrev} aria-label="Previous image">
+        &#8249;
+      </button>
+      <button className="gallery-arrow right" onClick={goNext} aria-label="Next image">
+        &#8250;
+      </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {galleryImages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className={`gallery-dot ${i === activeIndex ? 'active' : ''}`}
+            aria-label={`Go to image ${i + 1}`}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+// Stat counter component
+function AnimatedStat({ value, label, icon: Icon, index, isVisible }: {
+  value: string; label: string; icon: React.ElementType; index: number; isVisible: boolean;
+}) {
+  const display = useAnimatedCounter(value, isVisible);
+  return (
+    <div
+      className="text-center space-y-2 animate-counter"
+      style={{ animationDelay: `${index * 150}ms`, animationPlayState: isVisible ? 'running' : 'paused' }}
+    >
+      <Icon className="h-8 w-8 mx-auto mb-2 opacity-80 stat-icon-bounce" style={{ animationDelay: `${index * 200}ms` }} />
+      <p className="text-4xl md:text-5xl font-bold tabular-nums">{display}</p>
+      <p className="text-blue-100 text-sm md:text-base">{label}</p>
+    </div>
+  );
+}
 
 const CALENDLY_URL = 'https://calendly.com/goldendragon0830-hightech/30min';
 
@@ -60,52 +220,70 @@ export default function HomePage({ onNavigate }: HomePageProps) {
     <main>
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden">
+        {/* Background effects */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute top-20 -left-20 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl animate-float-delayed" />
-          <div className="absolute bottom-10 right-1/4 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute top-20 -left-20 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl animate-float-delayed" />
+          <div className="absolute bottom-10 right-1/4 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-blue-500/5 to-transparent rounded-full" />
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLW9wYWNpdHk9IjAuMDMiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-50" />
+          <FloatingParticles />
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8 animate-fade-in-up">
-              <div className="flex gap-2">
-                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-1">
+            <div className="space-y-8">
+              {/* Badges — staggered entrance */}
+              <div className="flex gap-2 animate-hero-badge">
+                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-1.5 shadow-sm">
                   <Sparkles className="h-3 w-3 mr-1" />
                   AI-Powered Solutions
                 </Badge>
-                <Badge variant="outline" className="px-4 py-1">Since 2020</Badge>
+                <Badge variant="outline" className="px-4 py-1.5">Since 2020</Badge>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+
+              {/* Title — staggered entrance */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight animate-hero-title">
                 Transform Your Business with{' '}
-                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent animate-gradient">
+                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent animate-gradient inline-block">
                   AI Innovation
                 </span>
               </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed max-w-xl">
+
+              {/* Subtitle — staggered entrance */}
+              <p className="text-xl text-muted-foreground leading-relaxed max-w-xl animate-hero-subtitle">
                 HighTech delivers cutting-edge AI solutions for web and mobile platforms,
                 empowering businesses across industries to achieve breakthrough results.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+
+              {/* Buttons — staggered entrance */}
+              <div className="flex flex-col sm:flex-row gap-4 animate-hero-buttons">
                 <Button
                   size="lg"
-                  className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-600/25 animate-pulse-glow"
+                  className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-600/25 animate-pulse-glow group"
                   onClick={() => onNavigate('services')}
                 >
-                  Explore Solutions <ArrowRight className="ml-2 h-5 w-5" />
+                  Explore Solutions <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg" asChild>
+                <Button size="lg" variant="outline" className="text-lg group" asChild>
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-                    <Calendar className="mr-2 h-5 w-5" />
+                    <Calendar className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
                     Schedule a Call
                   </a>
                 </Button>
               </div>
-              <div className="flex items-center gap-6 pt-4">
+
+              {/* Social proof — staggered entrance */}
+              <div className="flex items-center gap-6 pt-4 animate-hero-social-proof">
                 <div className="flex -space-x-3">
                   {teamAvatars.map((src, i) => (
-                    <img key={i} src={src} alt="Team member" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+                    <img
+                      key={i}
+                      src={src}
+                      alt="Team member"
+                      className="w-10 h-10 rounded-full border-2 border-white object-cover transition-transform hover:scale-110 hover:z-10 relative"
+                      style={{ animationDelay: `${i * 100}ms` }}
+                    />
                   ))}
                 </div>
                 <div>
@@ -119,17 +297,21 @@ export default function HomePage({ onNavigate }: HomePageProps) {
               </div>
             </div>
 
-            {/* 3D Tech Sphere */}
-            <div className="relative animate-fade-in-right">
+            {/* 3D Tech Sphere — enhanced entrance */}
+            <div className="relative animate-fade-in-right hidden lg:block">
               <TechSphere />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
-        <div ref={stats.ref} className={`container mx-auto px-4 sm:px-6 lg:px-8 scroll-hidden ${stats.isVisible ? 'scroll-visible' : ''}`}>
+      {/* Stats — with animated counting */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-20 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl" />
+          <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/5 rounded-full blur-2xl" />
+        </div>
+        <div ref={stats.ref} className={`container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 scroll-hidden ${stats.isVisible ? 'scroll-visible' : ''}`}>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { value: '200+', label: 'Clients Worldwide', icon: Users },
@@ -137,11 +319,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
               { value: '98%', label: 'Client Satisfaction', icon: Award },
               { value: '50+', label: 'AI Models Deployed', icon: Brain },
             ].map((stat, index) => (
-              <div key={index} className="text-center space-y-2" style={{ transitionDelay: `${index * 100}ms` }}>
-                <stat.icon className="h-8 w-8 mx-auto mb-2 opacity-80" />
-                <p className="text-4xl md:text-5xl font-bold">{stat.value}</p>
-                <p className="text-blue-100 text-sm md:text-base">{stat.label}</p>
-              </div>
+              <AnimatedStat key={index} value={stat.value} label={stat.label} icon={stat.icon} index={index} isVisible={stats.isVisible} />
             ))}
           </div>
         </div>
@@ -164,19 +342,19 @@ export default function HomePage({ onNavigate }: HomePageProps) {
             ].map((service, index) => (
               <Card
                 key={index}
-                className={`group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-blue-200 hover-lift stagger-item ${services.visibleItems[index] ? 'stagger-visible' : ''}`}
+                className={`group hover:shadow-xl transition-all duration-500 cursor-pointer border-2 hover:border-blue-200 hover-lift card-shine stagger-item ${services.visibleItems[index] ? 'stagger-visible' : ''}`}
                 onClick={() => onNavigate('services')}
               >
                 <CardHeader className="space-y-4">
-                  <div className={`w-14 h-14 rounded-xl bg-${service.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                  <div className={`w-14 h-14 rounded-xl bg-${service.color}-100 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     <service.icon className={`h-7 w-7 text-${service.color}-600`} />
                   </div>
-                  <CardTitle className="text-lg">{service.title}</CardTitle>
+                  <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">{service.title}</CardTitle>
                   <CardDescription>{service.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                    Learn more <ChevronRight className="h-4 w-4" />
+                  <span className="text-blue-600 text-sm font-medium flex items-center gap-1 group-hover:gap-3 transition-all duration-300">
+                    Learn more <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
                 </CardContent>
               </Card>
@@ -204,9 +382,10 @@ export default function HomePage({ onNavigate }: HomePageProps) {
               { title: 'ShopSmart Analytics', category: 'E-Commerce', description: 'Predictive analytics engine boosting e-commerce revenue by 45%', image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=600', tags: ['Predictive Analytics', 'ML', 'Retail'], result: '+45% revenue' },
               { title: 'FinGuard Pro', category: 'Finance', description: 'Real-time fraud detection system processing 10M+ transactions daily', image: 'https://images.pexels.com/photos/7567443/pexels-photo-7567443.jpeg?auto=compress&cs=tinysrgb&w=600', tags: ['Fraud Detection', 'Real-time', 'FinTech'], result: '10M+ txn/day' },
             ].map((project, index) => (
-              <Card key={index} className={`group overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer hover-lift stagger-item ${projects.visibleItems[index] ? 'stagger-visible' : ''}`} onClick={() => onNavigate('projects')}>
+              <Card key={index} className={`group overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer hover-lift card-shine stagger-item ${projects.visibleItems[index] ? 'stagger-visible' : ''}`} onClick={() => onNavigate('projects')}>
                 <div className="relative overflow-hidden">
-                  <img src={project.image} alt={project.title} className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={project.image} alt={project.title} className="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute top-4 left-4"><Badge className="bg-white/90 text-blue-700 backdrop-blur-sm">{project.category}</Badge></div>
                   <div className="absolute bottom-4 right-4"><Badge className="bg-green-500 text-white">{project.result}</Badge></div>
                 </div>
@@ -273,7 +452,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
               { quote: "The predictive analytics platform they built transformed our supply chain. We've reduced waste by 60% and improved delivery times significantly.", name: 'Mark Thompson', role: 'VP Operations, GlobalRetail', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face' },
               { quote: "Working with HighTech was a game-changer. Their fraud detection system saves us millions annually and processes transactions in real-time.", name: 'Lisa Nakamura', role: 'Director of Security, FinanceFirst', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop&crop=face' },
             ].map((testimonial, index) => (
-              <Card key={index} className={`relative hover:shadow-lg transition-shadow hover-lift stagger-item ${testimonials.visibleItems[index] ? 'stagger-visible' : ''}`}>
+              <Card key={index} className={`relative hover:shadow-lg transition-all duration-500 hover-lift testimonial-card stagger-item ${testimonials.visibleItems[index] ? 'stagger-visible' : ''}`}>
                 <CardHeader>
                   <div className="flex items-center gap-1 mb-4">
                     {[1, 2, 3, 4, 5].map((i) => (<Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />))}
@@ -306,7 +485,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           <div ref={team.containerRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
             {teamMembers.map((member, index) => (
               <div key={index} className={`text-center group cursor-pointer stagger-item ${team.visibleItems[index] ? 'stagger-visible' : ''}`} onClick={() => onNavigate('about')}>
-                <img src={member.avatar} alt={member.name} className="w-24 h-24 mx-auto rounded-full object-cover mb-4 group-hover:scale-110 transition-transform shadow-lg ring-4 ring-white" />
+                <img src={member.avatar} alt={member.name} className="w-24 h-24 mx-auto rounded-full object-cover mb-4 group-hover:scale-110 group-hover:ring-blue-200 transition-all duration-300 shadow-lg ring-4 ring-white" />
                 <h3 className="font-semibold">{member.name}</h3>
                 <p className="text-sm text-muted-foreground">{member.role}</p>
               </div>
@@ -330,7 +509,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           </div>
           <div ref={techStack.ref} className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 scroll-hidden ${techStack.isVisible ? 'scroll-visible' : ''}`}>
             {['TensorFlow', 'PyTorch', 'React', 'Node.js', 'AWS', 'Docker', 'Kubernetes', 'Python', 'TypeScript', 'PostgreSQL', 'Redis', 'GraphQL'].map((tech, index) => (
-              <div key={index} className="flex items-center justify-center p-4 rounded-xl border-2 hover:border-blue-300 hover:bg-blue-50/50 transition-all text-sm font-medium text-muted-foreground hover:text-blue-600 hover-lift" style={{ transitionDelay: `${index * 50}ms` }}>
+              <div key={index} className="flex items-center justify-center p-4 rounded-xl border-2 hover:border-blue-300 transition-all text-sm font-medium text-muted-foreground hover:text-blue-600 tech-grid-item" style={{ transitionDelay: `${index * 50}ms` }}>
                 {tech}
               </div>
             ))}

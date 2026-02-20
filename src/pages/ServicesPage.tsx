@@ -12,6 +12,7 @@ import {
   Smartphone,
   Users,
 } from 'lucide-react';
+import { useScrollAnimation, useStaggerAnimation } from '@/hooks/use-scroll-animation';
 
 interface ServicesPageProps {
   onNavigate: (page: string) => void;
@@ -153,24 +154,30 @@ const services = [
 ];
 
 export default function ServicesPage({ onNavigate }: ServicesPageProps) {
+  const quickNavStagger = useStaggerAnimation(4);
+  const engagementAnim = useScrollAnimation();
+  const engagementStagger = useStaggerAnimation(3);
+  const ctaAnim = useScrollAnimation();
+
   return (
     <main>
       {/* Hero */}
       <section className="relative py-20 md:py-28 bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-0 -left-20 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-            <Badge variant="outline" className="text-sm px-4 py-1">Our Services</Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <Badge variant="outline" className="text-sm px-4 py-1 animate-hero-badge">Our Services</Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-hero-title">
               AI-Powered Solutions for{' '}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Every Platform
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-hero-subtitle">
               From intelligent web applications to smart mobile experiences, we build
               AI solutions that scale with your business and deliver measurable results.
             </p>
@@ -181,12 +188,12 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
       {/* Services Quick Nav */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((service) => (
+          <div ref={quickNavStagger.containerRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, i) => (
               <a
                 key={service.id}
                 href={`#service-${service.id}`}
-                className="flex items-center gap-4 p-4 rounded-xl border-2 hover:border-blue-300 hover:bg-blue-50/50 transition-all group"
+                className={`flex items-center gap-4 p-4 rounded-xl border-2 hover:border-blue-300 hover:bg-blue-50/50 transition-all group card-shine stagger-item ${quickNavStagger.visibleItems[i] ? 'stagger-visible' : ''}`}
               >
                 <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <service.icon className="h-6 w-6 text-blue-600" />
@@ -203,92 +210,13 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
 
       {/* Detailed Service Sections */}
       {services.map((service, serviceIndex) => (
-        <section
-          key={service.id}
-          id={`service-${service.id}`}
-          className={`py-24 ${serviceIndex % 2 === 0 ? 'bg-muted/30' : ''}`}
-        >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Service Header */}
-            <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
-              <div className={`space-y-6 ${serviceIndex % 2 !== 0 ? 'lg:order-2' : ''}`}>
-                <Badge variant="outline" className="text-sm px-4 py-1">
-                  <service.icon className="h-3 w-3 mr-1" />
-                  {service.title}
-                </Badge>
-                <h2 className="text-3xl md:text-4xl font-bold">{service.subtitle}</h2>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {service.description}
-                </p>
-                <Button
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600"
-                  onClick={() => onNavigate('contact')}
-                >
-                  Discuss Your Project <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-              <div className={serviceIndex % 2 !== 0 ? 'lg:order-1' : ''}>
-                <img
-                  src={service.heroImage}
-                  alt={service.title}
-                  className="rounded-2xl shadow-xl"
-                />
-              </div>
-            </div>
-
-            {/* Features */}
-            <div className="grid sm:grid-cols-2 gap-6 mb-16">
-              {service.features.map((feature, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      <CardTitle className="text-lg">{feature.title}</CardTitle>
-                    </div>
-                    <CardDescription className="text-base leading-relaxed">
-                      {feature.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-
-            {/* Process */}
-            <div className="mb-16">
-              <h3 className="text-2xl font-bold text-center mb-10">Our Process</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {service.process.map((step, index) => (
-                  <div key={index} className="relative">
-                    <div className="text-5xl font-bold text-blue-100 mb-3">{step.step}</div>
-                    <h4 className="text-lg font-semibold mb-2">{step.title}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-                    {index < service.process.length - 1 && (
-                      <ArrowRight className="hidden lg:block absolute top-8 -right-3 h-5 w-5 text-blue-300" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Technologies */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-center">Technologies We Use</h3>
-              <div className="flex flex-wrap justify-center gap-3">
-                {service.technologies.map((tech) => (
-                  <Badge key={tech} variant="secondary" className="px-4 py-2 text-sm">
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        <ServiceSection key={service.id} service={service} serviceIndex={serviceIndex} onNavigate={onNavigate} />
       ))}
 
       {/* Engagement Models */}
       <section className="py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
+          <div ref={engagementAnim.ref} className={`max-w-3xl mx-auto text-center space-y-4 mb-16 scroll-hidden ${engagementAnim.isVisible ? 'scroll-visible' : ''}`}>
             <Badge variant="outline" className="text-sm px-4 py-1">Engagement Models</Badge>
             <h2 className="text-3xl md:text-4xl font-bold">Flexible Engagement Options</h2>
             <p className="text-lg text-muted-foreground">
@@ -296,7 +224,7 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div ref={engagementStagger.containerRef} className="grid md:grid-cols-3 gap-8">
             {[
               {
                 title: 'Project-Based',
@@ -322,13 +250,13 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
             ].map((model, index) => (
               <Card
                 key={index}
-                className={`relative hover:shadow-xl transition-all ${
+                className={`relative engagement-card hover-lift stagger-item ${engagementStagger.visibleItems[index] ? 'stagger-visible' : ''} ${
                   model.popular ? 'border-2 border-blue-600 scale-105' : ''
                 }`}
               >
                 {model.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-blue-600">Most Popular</Badge>
+                    <Badge className="bg-blue-600 animate-bubble">Most Popular</Badge>
                   </div>
                 )}
                 <CardHeader className="space-y-4">
@@ -348,7 +276,7 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
                     ))}
                   </ul>
                   <Button
-                    className={`w-full ${
+                    className={`w-full transition-all duration-300 hover:scale-105 ${
                       model.popular
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-600'
                         : ''
@@ -366,9 +294,13 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
+      <section className="relative py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl cta-bg-orb" />
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl cta-bg-orb" />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-5xl font-bold">
               Let's Build Something Amazing
             </h2>
@@ -378,7 +310,7 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
             </p>
             <Button
               size="lg"
-              className="text-lg bg-white text-blue-900 hover:bg-blue-50"
+              className="text-lg bg-white text-blue-900 hover:bg-blue-50 transition-all duration-300 hover:scale-105 hover:shadow-xl"
               onClick={() => onNavigate('contact')}
             >
               Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
@@ -387,5 +319,98 @@ export default function ServicesPage({ onNavigate }: ServicesPageProps) {
         </div>
       </section>
     </main>
+  );
+}
+
+/* Sub-component for each service section with its own scroll animations */
+function ServiceSection({ service, serviceIndex, onNavigate }: { service: typeof services[0]; serviceIndex: number; onNavigate: (page: string) => void }) {
+  const headerAnim = useScrollAnimation();
+  const featuresStagger = useStaggerAnimation(4);
+  const processAnim = useScrollAnimation();
+  const processStagger = useStaggerAnimation(4);
+  const techAnim = useScrollAnimation();
+
+  return (
+    <section
+      id={`service-${service.id}`}
+      className={`py-24 ${serviceIndex % 2 === 0 ? 'bg-muted/30' : ''}`}
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Service Header */}
+        <div ref={headerAnim.ref} className={`grid lg:grid-cols-2 gap-16 items-center mb-16 ${serviceIndex % 2 === 0 ? 'scroll-hidden' : 'scroll-hidden-right'} ${headerAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div className={`space-y-6 ${serviceIndex % 2 !== 0 ? 'lg:order-2' : ''}`}>
+            <Badge variant="outline" className="text-sm px-4 py-1">
+              <service.icon className="h-3 w-3 mr-1" />
+              {service.title}
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold">{service.subtitle}</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              {service.description}
+            </p>
+            <Button
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              onClick={() => onNavigate('contact')}
+            >
+              Discuss Your Project <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+          <div className={serviceIndex % 2 !== 0 ? 'lg:order-1' : ''}>
+            <img
+              src={service.heroImage}
+              alt={service.title}
+              className="rounded-2xl shadow-xl transition-transform duration-500 hover:scale-[1.02]"
+            />
+          </div>
+        </div>
+
+        {/* Features */}
+        <div ref={featuresStagger.containerRef} className="grid sm:grid-cols-2 gap-6 mb-16">
+          {service.features.map((feature, index) => (
+            <Card key={index} className={`hover:shadow-lg transition-all duration-300 hover-lift card-shine stagger-item ${featuresStagger.visibleItems[index] ? 'stagger-visible' : ''}`}>
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CardTitle className="text-lg">{feature.title}</CardTitle>
+                </div>
+                <CardDescription className="text-base leading-relaxed">
+                  {feature.description}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+
+        {/* Process */}
+        <div className="mb-16">
+          <div ref={processAnim.ref} className={`scroll-hidden ${processAnim.isVisible ? 'scroll-visible' : ''}`}>
+            <h3 className="text-2xl font-bold text-center mb-10">Our Process</h3>
+          </div>
+          <div ref={processStagger.containerRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {service.process.map((step, index) => (
+              <div key={index} className={`relative stagger-item ${processStagger.visibleItems[index] ? 'stagger-visible' : ''}`}>
+                <div className="text-5xl font-bold text-blue-100 mb-3 process-step-number inline-block rounded-lg px-2">{step.step}</div>
+                <h4 className="text-lg font-semibold mb-2">{step.title}</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                {index < service.process.length - 1 && (
+                  <ArrowRight className="hidden lg:block absolute top-8 -right-3 h-5 w-5 text-blue-300" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Technologies */}
+        <div ref={techAnim.ref} className={`scroll-hidden ${techAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <h3 className="text-lg font-semibold mb-4 text-center">Technologies We Use</h3>
+          <div className="flex flex-wrap justify-center gap-3">
+            {service.technologies.map((tech, i) => (
+              <Badge key={tech} variant="secondary" className="px-4 py-2 text-sm transition-all duration-300 hover:scale-110 hover:bg-blue-100 hover:text-blue-700 cursor-default" style={{ animationDelay: `${i * 80}ms` }}>
+                {tech}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

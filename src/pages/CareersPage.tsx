@@ -68,7 +68,7 @@ const hiringSteps = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function CareersPage() {
+export default function CareersPage({ onNavigate }: { onNavigate?: (page: string) => void }) {
   const positionsAnim = useScrollAnimation();
   const benefitsAnim = useScrollAnimation();
   const benefitsStagger = useStaggerAnimation(benefits.length);
@@ -88,16 +88,16 @@ export default function CareersPage() {
           <div className="absolute bottom-0 -left-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-            <Badge variant="outline" className="text-sm px-4 py-1">We're Hiring</Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <Badge variant="outline" className="text-sm px-4 py-1 animate-hero-badge">We're Hiring</Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-hero-title">
               Build the Future of{' '}
               <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">AI With Us</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-hero-subtitle">
               Join a team of world-class engineers, researchers, and designers solving the hardest problems in AI.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-hero-buttons">
               <Button size="lg" className="text-lg animate-pulse-glow">
                 <Briefcase className="mr-2 h-5 w-5" /> View Open Positions
               </Button>
@@ -122,7 +122,7 @@ export default function CareersPage() {
             {values.map((v, i) => {
               const Icon = v.icon;
               return (
-                <Card key={i} className={`p-6 text-center hover-lift stagger-item ${valuesStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+                <Card key={i} className={`p-6 text-center hover-lift card-shine stagger-bubble-item ${valuesStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
                   <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center mx-auto mb-4"><Icon className="h-6 w-6 text-purple-600" /></div>
                   <h3 className="font-semibold mb-2">{v.title}</h3>
                   <p className="text-sm text-muted-foreground">{v.description}</p>
@@ -159,7 +159,7 @@ export default function CareersPage() {
             {benefits.map((b, i) => {
               const Icon = b.icon;
               return (
-                <Card key={i} className={`p-6 hover-lift stagger-item ${benefitsStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+                <Card key={i} className={`p-6 hover-lift card-shine stagger-item ${benefitsStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><Icon className="h-5 w-5 text-blue-600" /></div>
                     <div>
@@ -183,7 +183,7 @@ export default function CareersPage() {
           </div>
           <div ref={spotlightStagger.containerRef} className="grid md:grid-cols-3 gap-8">
             {employees.map((emp, i) => (
-              <Card key={i} className={`p-8 hover-lift stagger-item ${spotlightStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+              <Card key={i} className={`p-8 hover-lift testimonial-card stagger-item ${spotlightStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
                 <div className="flex items-start gap-1 mb-4">
                   {[1, 2, 3, 4, 5].map((s) => (<Star key={s} className="h-4 w-4 fill-yellow-400 text-yellow-400" />))}
                 </div>
@@ -204,7 +204,7 @@ export default function CareersPage() {
       {/* Hiring Process */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={processAnim.ref} className={`text-center mb-12 scroll-hidden ${processAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={processAnim.ref} className={`text-center mb-12 scroll-hidden-flip ${processAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Hiring Process</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Transparent, respectful, and designed to find the best fit — for both sides.</p>
           </div>
@@ -216,7 +216,7 @@ export default function CareersPage() {
                     <div className="absolute left-[23px] top-12 bottom-0 w-0.5 bg-blue-200" />
                   )}
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg">{step.step}</div>
+                    <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg process-step-number">{step.step}</div>
                   </div>
                   <div className="pb-10">
                     <h3 className="text-lg font-semibold mb-1">{step.title}</h3>
@@ -231,8 +231,12 @@ export default function CareersPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-24 bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 text-white overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl cta-bg-orb" />
+          <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl cta-bg-orb" />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-5xl font-bold">Ready to Make an Impact?</h2>
             <p className="text-xl text-purple-200 max-w-2xl mx-auto">Join us and help shape the future of artificial intelligence. Your next chapter starts here.</p>

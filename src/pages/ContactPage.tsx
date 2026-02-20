@@ -44,7 +44,7 @@ const faqs = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function ContactPage() {
+export default function ContactPage({ onNavigate }: { onNavigate?: (page: string) => void }) {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', company: '', service: '', budget: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const contactAnim = useScrollAnimation();
@@ -68,13 +68,13 @@ export default function ContactPage() {
           <div className="absolute bottom-0 -left-20 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-            <Badge variant="outline" className="text-sm px-4 py-1">Get in Touch</Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <Badge variant="outline" className="text-sm px-4 py-1 animate-hero-badge">Get in Touch</Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-hero-title">
               Let's Build Something{' '}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Extraordinary</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-hero-subtitle">
               Whether you have a clear project in mind or just want to explore possibilities, we'd love to hear from you.
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function ContactPage() {
             {contactMethods.map((m, i) => {
               const Icon = m.icon;
               const inner = (
-                <Card className={`p-6 text-center hover-lift cursor-pointer stagger-item ${contactStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+                <Card className={`p-6 text-center hover-lift card-shine cursor-pointer stagger-bubble-item ${contactStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
                   <div className={`w-12 h-12 rounded-xl ${m.color} flex items-center justify-center mx-auto mb-4`}>
                     <Icon className="h-6 w-6" />
                   </div>
@@ -114,7 +114,7 @@ export default function ContactPage() {
       {/* Form + Quick Chat */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={formAnim.ref} className={`grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto scroll-hidden ${formAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={formAnim.ref} className={`grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto scroll-blur-zoom ${formAnim.isVisible ? 'scroll-visible' : ''}`}>
             {/* Form */}
             <div className="lg:col-span-2">
               <Card className="p-8">
@@ -216,7 +216,7 @@ export default function ContactPage() {
       {/* FAQ */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={faqAnim.ref} className={`text-center mb-12 scroll-hidden ${faqAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={faqAnim.ref} className={`text-center mb-12 scroll-hidden-flip ${faqAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Quick answers to common questions about working with us.</p>
           </div>
@@ -235,7 +235,7 @@ export default function ContactPage() {
           </div>
           <div ref={officesStagger.containerRef} className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {offices.map((o, i) => (
-              <Card key={i} className={`p-6 hover-lift stagger-item ${officesStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
+              <Card key={i} className={`p-6 hover-lift card-shine stagger-item ${officesStagger.visibleItems[i] ? 'stagger-visible' : ''}`}>
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0"><Globe className="h-5 w-5 text-blue-600" /></div>
                   <div>

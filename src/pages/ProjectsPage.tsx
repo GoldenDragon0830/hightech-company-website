@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
 interface ProjectsPageProps {
   onNavigate: (page: string) => void;
@@ -230,6 +231,9 @@ const projects = [
 export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [expandedProject, setExpandedProject] = useState<number | null>(null);
+  const statsAnim = useScrollAnimation();
+  const filterAnim = useScrollAnimation();
+  const ctaAnim = useScrollAnimation();
 
   const filteredProjects = activeCategory === 'All'
     ? projects
@@ -240,19 +244,20 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
       {/* Hero */}
       <section className="relative py-20 md:py-28 bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-0 -left-20 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-            <Badge variant="outline" className="text-sm px-4 py-1">Our Portfolio</Badge>
-            <h1   className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <Badge variant="outline" className="text-sm px-4 py-1 animate-hero-badge">Our Portfolio</Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-hero-title">
               Projects That{' '}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Deliver Results
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-hero-subtitle">
               Explore our portfolio of AI solutions that have transformed businesses
               and delivered measurable impact across industries.
             </p>
@@ -262,24 +267,19 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
 
       {/* Stats Bar */}
       <section className="py-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div ref={statsAnim.ref} className={`container mx-auto px-4 sm:px-6 lg:px-8 scroll-hidden ${statsAnim.isVisible ? 'scroll-visible' : ''}`}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <p className="text-3xl font-bold">500+</p>
-              <p className="text-blue-200 text-sm">Projects Delivered</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">98%</p>
-              <p className="text-blue-200 text-sm">Client Satisfaction</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">6+</p>
-              <p className="text-blue-200 text-sm">Industry Verticals</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold">$100M+</p>
-              <p className="text-blue-200 text-sm">Client Value Generated</p>
-            </div>
+            {[
+              { value: '500+', label: 'Projects Delivered' },
+              { value: '98%', label: 'Client Satisfaction' },
+              { value: '6+', label: 'Industry Verticals' },
+              { value: '$100M+', label: 'Client Value Generated' },
+            ].map((stat, i) => (
+              <div key={i} style={{ transitionDelay: `${i * 100}ms` }}>
+                <p className="text-3xl font-bold">{stat.value}</p>
+                <p className="text-blue-200 text-sm">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -288,16 +288,16 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Category Filters */}
-          <div className="flex items-center gap-2 mb-12 overflow-x-auto pb-2">
+          <div ref={filterAnim.ref} className={`flex items-center gap-2 mb-12 overflow-x-auto pb-2 scroll-hidden ${filterAnim.isVisible ? 'scroll-visible' : ''}`}>
             <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => { setActiveCategory(cat); setExpandedProject(null); }}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                   activeCategory === cat
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
-                    : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 scale-105'
+                    : 'bg-muted hover:bg-muted/80 text-muted-foreground hover:scale-105'
                 }`}
               >
                 {cat}
@@ -308,147 +308,20 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
           {/* Projects Grid */}
           <div className="space-y-8">
             {filteredProjects.map((project) => (
-              <Card
-                key={project.id}
-                className={`overflow-hidden transition-all duration-300 ${
-                  expandedProject === project.id ? 'shadow-2xl ring-2 ring-blue-200' : 'hover:shadow-xl'
-                }`}
-              >
-                {/* Project Summary */}
-                <div
-                  className="cursor-pointer"
-                  onClick={() => setExpandedProject(expandedProject === project.id ? null : project.id)}
-                >
-                  <div className="grid md:grid-cols-3 gap-0">
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full min-h-[240px] object-cover"
-                      />
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        <Badge className="bg-white/90 text-blue-700 backdrop-blur-sm">
-                          {project.category}
-                        </Badge>
-                        <Badge className="bg-green-500 text-white">
-                          {project.status}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="md:col-span-2 p-8">
-                      <div className="flex flex-col h-full justify-between">
-                        <div>
-                          <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
-                          <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
-
-                          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
-                            <span className="flex items-center gap-1">
-                              <Users className="h-4 w-4" /> {project.client}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" /> {project.duration}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" /> {project.year}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Layers className="h-4 w-4" /> {project.team}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Key Results Preview */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {project.results.map((result, i) => (
-                            <div key={i} className="text-center p-3 rounded-lg bg-blue-50">
-                              <p className="text-xl font-bold text-blue-600">{result.metric}</p>
-                              <p className="text-xs text-muted-foreground">{result.description}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Expanded Details */}
-                {expandedProject === project.id && (
-                  <div className="border-t animate-in slide-in-from-top-2 duration-300">
-                    <div className="p-8 space-y-10">
-                      {/* Challenge & Solution */}
-                      <div className="grid md:grid-cols-2 gap-8">
-                        <div className="space-y-4">
-                          <h4 className="text-lg font-semibold flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-                              <TrendingUp className="h-4 w-4 text-amber-600" />
-                            </span>
-                            The Challenge
-                          </h4>
-                          <p className="text-muted-foreground leading-relaxed">{project.challenge}</p>
-                        </div>
-                        <div className="space-y-4">
-                          <h4 className="text-lg font-semibold flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                              <CheckCircle2 className="h-4 w-4 text-green-600" />
-                            </span>
-                            Our Solution
-                          </h4>
-                          <p className="text-muted-foreground leading-relaxed">{project.solution}</p>
-                        </div>
-                      </div>
-
-                      {/* Features */}
-                      <div>
-                        <h4 className="text-lg font-semibold mb-4">Key Features</h4>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          {project.features.map((feature, i) => (
-                            <div key={i} className="flex items-center gap-2 text-sm">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                              <span className="text-muted-foreground">{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Technologies */}
-                      <div>
-                        <h4 className="text-lg font-semibold mb-4">Technology Stack</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {project.technologies.map((tech) => (
-                            <Badge key={tech} variant="secondary" className="px-3 py-1">{tech}</Badge>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Testimonial */}
-                      <div className="p-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border">
-                        <div className="flex items-start gap-1 mb-3">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          ))}
-                        </div>
-                        <p className="text-muted-foreground italic mb-4 leading-relaxed">
-                          "{project.testimonial.quote}"
-                        </p>
-                        <div>
-                          <p className="font-semibold text-sm">{project.testimonial.author}</p>
-                          <p className="text-xs text-muted-foreground">{project.testimonial.role}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </Card>
+              <ProjectCard key={project.id} project={project} expanded={expandedProject === project.id} onToggle={() => setExpandedProject(expandedProject === project.id ? null : project.id)} />
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
+      <section className="relative py-24 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl cta-bg-orb" />
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl cta-bg-orb" />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-5xl font-bold">
               Ready to Be Our Next Success Story?
             </h2>
@@ -458,7 +331,7 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
-                className="text-lg bg-white text-blue-900 hover:bg-blue-50"
+                className="text-lg bg-white text-blue-900 hover:bg-blue-50 transition-all duration-300 hover:scale-105"
                 onClick={() => onNavigate('contact')}
               >
                 Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
@@ -466,7 +339,7 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-lg border-blue-400 text-blue-100 hover:bg-blue-500/20"
+                className="text-lg border-blue-400 text-blue-100 hover:bg-blue-500/20 transition-all duration-300 hover:scale-105"
                 onClick={() => onNavigate('services')}
               >
                 Explore Services
@@ -476,5 +349,144 @@ export default function ProjectsPage({ onNavigate }: ProjectsPageProps) {
         </div>
       </section>
     </main>
+  );
+}
+
+function ProjectCard({ project, expanded, onToggle }: { project: typeof projects[0]; expanded: boolean; onToggle: () => void }) {
+  const cardAnim = useScrollAnimation();
+
+  return (
+    <Card
+      ref={cardAnim.ref}
+      className={`overflow-hidden transition-all duration-500 card-shine scroll-hidden-scale ${cardAnim.isVisible ? 'scroll-visible' : ''} ${
+        expanded ? 'shadow-2xl ring-2 ring-blue-200' : 'hover:shadow-xl'
+      }`}
+    >
+      {/* Project Summary */}
+      <div
+        className="cursor-pointer"
+        onClick={onToggle}
+      >
+        <div className="grid md:grid-cols-3 gap-0">
+          <div className="relative overflow-hidden group">
+            <img
+              src={project.image}
+              alt={project.title}
+              className="w-full h-full min-h-[240px] object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute top-4 left-4 flex gap-2">
+              <Badge className="bg-white/90 text-blue-700 backdrop-blur-sm">
+                {project.category}
+              </Badge>
+              <Badge className="bg-green-500 text-white">
+                {project.status}
+              </Badge>
+            </div>
+          </div>
+
+          <div className="md:col-span-2 p-8">
+            <div className="flex flex-col h-full justify-between">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
+                <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
+
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
+                  <span className="flex items-center gap-1">
+                    <Users className="h-4 w-4" /> {project.client}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" /> {project.duration}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" /> {project.year}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Layers className="h-4 w-4" /> {project.team}
+                  </span>
+                </div>
+              </div>
+
+              {/* Key Results Preview */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {project.results.map((result, i) => (
+                  <div key={i} className="text-center p-3 rounded-lg bg-blue-50 transition-transform duration-300 hover:scale-105">
+                    <p className="text-xl font-bold text-blue-600">{result.metric}</p>
+                    <p className="text-xs text-muted-foreground">{result.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Expanded Details */}
+      {expanded && (
+        <div className="border-t animate-in slide-in-from-top-2 duration-300">
+          <div className="p-8 space-y-10">
+            {/* Challenge & Solution */}
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-amber-600" />
+                  </span>
+                  The Challenge
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">{project.challenge}</p>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  </span>
+                  Our Solution
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">{project.solution}</p>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Key Features</h4>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {project.features.map((feature, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm" style={{ animationDelay: `${i * 80}ms` }}>
+                    <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-muted-foreground">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Technologies */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Technology Stack</h4>
+              <div className="flex flex-wrap gap-2">
+                {project.technologies.map((tech) => (
+                  <Badge key={tech} variant="secondary" className="px-3 py-1 transition-all duration-300 hover:scale-110 hover:bg-blue-100 hover:text-blue-700">{tech}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Testimonial */}
+            <div className="p-6 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border testimonial-card">
+              <div className="flex items-start gap-1 mb-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+              <p className="text-muted-foreground italic mb-4 leading-relaxed">
+                "{project.testimonial.quote}"
+              </p>
+              <div>
+                <p className="font-semibold text-sm">{project.testimonial.author}</p>
+                <p className="text-xs text-muted-foreground">{project.testimonial.role}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
   );
 }

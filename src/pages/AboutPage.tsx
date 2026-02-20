@@ -65,13 +65,13 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
           <div className="absolute bottom-0 -left-20 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in-up">
-            <Badge variant="outline" className="text-sm px-4 py-1">About HighTech</Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <Badge variant="outline" className="text-sm px-4 py-1 animate-hero-badge">About HighTech</Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-hero-title">
               Building the Future of{' '}
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Intelligent Technology</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-hero-subtitle">
               We are a team of world-class engineers, researchers, and designers united by a passion for making AI accessible and impactful for every business.
             </p>
           </div>
@@ -87,7 +87,7 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
               { icon: Lightbulb, title: 'Our Vision', color: 'indigo', desc: 'To be the world\'s most trusted AI partner, known for creating technology that is not only powerful but ethical, transparent, and designed to enhance human capabilities.' },
               { icon: Heart, title: 'Our Values', color: 'purple', desc: 'Innovation with integrity. We believe in pushing boundaries while maintaining the highest standards of ethics, quality, and client partnership in everything we build.' },
             ].map((item, index) => (
-              <Card key={index} className={`border-2 hover:border-${item.color}-600 transition-all group hover-lift stagger-item ${missionAnim.visibleItems[index] ? 'stagger-visible' : ''}`}>
+              <Card key={index} className={`border-2 hover:border-${item.color}-600 transition-all group hover-lift card-shine stagger-bubble-item ${missionAnim.visibleItems[index] ? 'stagger-visible' : ''}`}>
                 <CardHeader className="space-y-4">
                   <div className={`w-14 h-14 rounded-xl bg-${item.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform`}>
                     <item.icon className={`h-7 w-7 text-${item.color}-600`} />
@@ -104,7 +104,7 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
       {/* Company Story */}
       <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={storyAnim.ref} className={`grid lg:grid-cols-2 gap-16 items-center scroll-hidden ${storyAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={storyAnim.ref} className={`grid lg:grid-cols-2 gap-16 items-center scroll-hidden-right ${storyAnim.isVisible ? 'scroll-visible' : ''}`}>
             <div className="space-y-6">
               <Badge variant="outline" className="text-sm px-4 py-1">Our Story</Badge>
               <h2 className="text-3xl md:text-4xl font-bold">From Startup to Industry Leader</h2>
@@ -149,7 +149,7 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
               { icon: Globe2, title: 'Global Perspective', description: 'Our diverse, distributed team brings perspectives from 15+ countries, enriching every solution we create.' },
               { icon: TrendingUp, title: 'Continuous Growth', description: 'Every team member gets a $5,000 annual learning budget. We grow together through knowledge sharing.' },
             ].map((value, index) => (
-              <div key={index} className={`flex gap-4 items-start group stagger-item ${valuesAnim.visibleItems[index] ? 'stagger-visible' : ''}`}>
+              <div key={index} className={`flex gap-4 items-start group stagger-bubble-item ${valuesAnim.visibleItems[index] ? 'stagger-visible' : ''}`}>
                 <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <value.icon className="h-6 w-6 text-blue-600" />
                 </div>
@@ -170,11 +170,11 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
             <Badge variant="outline" className="text-sm px-4 py-1">Our Journey</Badge>
             <h2 className="text-3xl md:text-4xl font-bold">Company Timeline</h2>
           </div>
-          <div ref={timelineAnim.ref} className={`max-w-3xl mx-auto scroll-hidden ${timelineAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={timelineAnim.ref} className={`max-w-3xl mx-auto ${timelineAnim.isVisible ? 'timeline-visible' : ''}`}>
             <div className="relative">
-              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-blue-200" />
+              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-blue-200 timeline-line" />
               {timeline.map((item, index) => (
-                <div key={index} className="relative flex gap-8 pb-12 last:pb-0" style={{ transitionDelay: `${index * 100}ms` }}>
+                <div key={index} className="relative flex gap-8 pb-12 last:pb-0 timeline-item" style={{ transitionDelay: `${index * 100}ms` }}>
                   <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm z-10 flex-shrink-0 shadow-lg shadow-blue-600/25 hover:scale-110 transition-transform">
                     {item.year}
                   </div>
@@ -218,7 +218,7 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
           </div>
           <div ref={teamAnim.containerRef} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
-              <Card key={index} className={`text-center hover:shadow-xl transition-all duration-300 group hover-lift stagger-item ${teamAnim.visibleItems[index] ? 'stagger-visible' : ''}`}>
+              <Card key={index} className={`text-center hover:shadow-xl transition-all duration-300 group hover-lift card-shine stagger-item ${teamAnim.visibleItems[index] ? 'stagger-visible' : ''}`}>
                 <CardHeader className="space-y-4">
                   <img src={member.avatar} alt={member.name} className="w-24 h-24 mx-auto rounded-full object-cover group-hover:scale-110 transition-transform shadow-lg ring-4 ring-white" />
                   <div>
@@ -241,9 +241,9 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
       {/* Culture */}
       <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={cultureAnim.ref} className={`grid lg:grid-cols-2 gap-16 items-center scroll-hidden ${cultureAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={cultureAnim.ref} className={`grid lg:grid-cols-2 gap-16 items-center scroll-blur-zoom ${cultureAnim.isVisible ? 'scroll-visible' : ''}`}>
             <div>
-              <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Team culture" className="rounded-2xl shadow-xl" />
+              <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Team culture" className="rounded-2xl shadow-xl transition-transform duration-500 hover:scale-[1.02]" />
             </div>
             <div className="space-y-6">
               <Badge variant="outline" className="text-sm px-4 py-1">Our Culture</Badge>
@@ -277,7 +277,7 @@ export default function AboutPage({ onNavigate }: AboutPageProps) {
       {/* CTA */}
       <section className="py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
+          <div ref={ctaAnim.ref} className={`max-w-4xl mx-auto text-center space-y-8 scroll-hidden-flip ${ctaAnim.isVisible ? 'scroll-visible' : ''}`}>
             <h2 className="text-3xl md:text-5xl font-bold">Ready to Work With Us?</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Let's discuss how our team can bring your AI vision to life.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
