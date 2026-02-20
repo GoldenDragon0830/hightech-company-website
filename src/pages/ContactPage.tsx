@@ -19,10 +19,6 @@ import { useScrollAnimation, useStaggerAnimation } from '@/hooks/use-scroll-anim
 
 const CALENDLY_URL = 'https://calendly.com/goldendragon0830-hightech/30min';
 
-interface ContactPageProps {
-  onNavigate: (page: string) => void;
-}
-
 const contactMethods = [
   { icon: Mail, title: 'Email Us', description: 'hello@hightechai.com', detail: 'We reply within 24 hours', color: 'bg-blue-100 text-blue-600' },
   { icon: Phone, title: 'Call Us', description: '+1 (555) 123-4567', detail: 'Mon–Fri, 9 AM – 6 PM EST', color: 'bg-green-100 text-green-600' },
@@ -48,7 +44,7 @@ const faqs = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function ContactPage({ onNavigate }: ContactPageProps) {
+export default function ContactPage() {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', company: '', service: '', budget: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const contactAnim = useScrollAnimation();

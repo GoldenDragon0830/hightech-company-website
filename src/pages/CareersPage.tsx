@@ -25,9 +25,6 @@ import { useScrollAnimation, useStaggerAnimation } from '@/hooks/use-scroll-anim
 
 const CALENDLY_URL = 'https://calendly.com/goldendragon0830-hightech/30min';
 
-interface CareersPageProps {
-  onNavigate: (page: string) => void;
-}
 
 const openPositions = [
   { title: 'Senior ML Engineer', department: 'AI Research', location: 'San Francisco / Remote', type: 'Full-time', level: 'Senior', posted: '2 days ago', description: 'Lead the development of next-generation ML models for our core AI platform.' },
@@ -71,7 +68,7 @@ const hiringSteps = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function CareersPage({ onNavigate }: CareersPageProps) {
+export default function CareersPage() {
   const positionsAnim = useScrollAnimation();
   const benefitsAnim = useScrollAnimation();
   const benefitsStagger = useStaggerAnimation(benefits.length);
