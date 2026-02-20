@@ -68,7 +68,7 @@ const hiringSteps = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function CareersPage({ onNavigate }: { onNavigate?: (page: string) => void }) {
+export default function CareersPage({ onNavigate: _onNavigate }: { onNavigate?: (page: string) => void }) {
   const positionsAnim = useScrollAnimation();
   const benefitsAnim = useScrollAnimation();
   const benefitsStagger = useStaggerAnimation(benefits.length);

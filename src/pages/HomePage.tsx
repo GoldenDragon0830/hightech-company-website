@@ -431,9 +431,8 @@ export default function HomePage({ onNavigate }: HomePageProps) {
                 ))}
               </div>
             </div>
-            <div className="relative">
-              <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Team collaboration" className="rounded-2xl shadow-xl" />
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-600/20 to-transparent" />
+            <div className="relative image-gallery-container" style={{ minHeight: '400px' }}>
+              <ImageGallery />
             </div>
           </div>
         </div>

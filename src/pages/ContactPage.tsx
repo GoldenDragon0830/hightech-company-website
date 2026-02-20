@@ -44,7 +44,7 @@ const faqs = [
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function ContactPage({ onNavigate }: { onNavigate?: (page: string) => void }) {
+export default function ContactPage({ onNavigate: _onNavigate }: { onNavigate?: (page: string) => void }) {
   const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', company: '', service: '', budget: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const contactAnim = useScrollAnimation();
