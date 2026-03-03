@@ -6,18 +6,15 @@ import {
   Brain,
   Globe,
   Smartphone,
-  Zap,
   Users,
   Target,
-  Award,
+  Award,  
   CheckCircle2,
   Star,
   Briefcase,
   ChevronRight,
   Code2,
   Cpu,
-  BarChart3,
-  Shield,
   Sparkles,
   Calendar,
 } from 'lucide-react';
@@ -90,83 +87,6 @@ function FloatingParticles() {
   );
 }
 
-// Multi-image gallery component with auto-rotation
-const galleryImages = [
-  { src: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Team collaboration' },
-  { src: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Innovation workshop' },
-  { src: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Team meeting' },
-  { src: 'https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Engineering at work' },
-];
-
-function ImageGallery() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const resetAutoPlay = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % galleryImages.length);
-    }, 4000);
-  };
-
-  useEffect(() => {
-    resetAutoPlay();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, []);
-
-  const goTo = (index: number) => {
-    setActiveIndex(index);
-    resetAutoPlay();
-  };
-
-  const goPrev = () => goTo((activeIndex - 1 + galleryImages.length) % galleryImages.length);
-  const goNext = () => goTo((activeIndex + 1) % galleryImages.length);
-
-  return (
-    <>
-      {/* Sliding track */}
-      <div
-        className="image-gallery-track"
-        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-      >
-        {galleryImages.map((img, i) => (
-          <div key={i} className="image-gallery-slide" style={{ minHeight: '400px' }}>
-            <img
-              src={img.src}
-              alt={img.alt}
-              className="rounded-2xl shadow-xl"
-              style={{ minHeight: '400px' }}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-blue-600/20 to-transparent pointer-events-none" />
-
-      {/* Arrow buttons */}
-      <button className="gallery-arrow left" onClick={goPrev} aria-label="Previous image">
-        &#8249;
-      </button>
-      <button className="gallery-arrow right" onClick={goNext} aria-label="Next image">
-        &#8250;
-      </button>
-
-      {/* Dot indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-        {galleryImages.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            className={`gallery-dot ${i === activeIndex ? 'active' : ''}`}
-            aria-label={`Go to image ${i + 1}`}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
 // Stat counter component
 function AnimatedStat({ value, label, icon: Icon, index, isVisible }: {
   value: string; label: string; icon: React.ElementType; index: number; isVisible: boolean;
@@ -209,7 +129,6 @@ export default function HomePage({ onNavigate }: HomePageProps) {
   const stats = useScrollAnimation();
   const services = useStaggerAnimation(4);
   const projects = useStaggerAnimation(3);
-  const whyUs = useScrollAnimation();
   const testimonials = useStaggerAnimation(3);
   const team = useStaggerAnimation(4);
   const techStack = useScrollAnimation();
@@ -298,7 +217,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
             </div>
 
             {/* 3D Tech Sphere — enhanced entrance */}
-            <div className="relative animate-fade-in-right hidden lg:block">
+            <div className="relative animate-fade-in-right lg:block">
               <TechSphere />
             </div>
           </div>
@@ -404,39 +323,6 @@ export default function HomePage({ onNavigate }: HomePageProps) {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-24 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={whyUs.ref} className={`grid lg:grid-cols-2 gap-16 items-center scroll-hidden ${whyUs.isVisible ? 'scroll-visible' : ''}`}>
-            <div className="space-y-8">
-              <Badge variant="outline" className="text-sm px-4 py-1">Why HighTech</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold">We Build AI That Actually Works</h2>
-              <p className="text-lg text-muted-foreground">Our approach combines deep technical expertise with business acumen to deliver AI solutions that create real, measurable impact.</p>
-              <div className="space-y-6">
-                {[
-                  { icon: Shield, title: 'Enterprise-Grade Security', description: 'SOC 2 compliant with end-to-end encryption and data privacy controls' },
-                  { icon: BarChart3, title: 'Measurable ROI', description: 'Every project includes KPIs and performance tracking dashboards' },
-                  { icon: Zap, title: 'Rapid Deployment', description: 'From concept to production in weeks, not months, with agile methodology' },
-                  { icon: Users, title: 'Dedicated Support', description: '24/7 support with dedicated account managers for every client' },
-                ].map((feature, index) => (
-                  <div key={index} className="flex gap-4 items-start group">
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                      <feature.icon className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg mb-1">{feature.title}</h3>
-                      <p className="text-muted-foreground">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="relative image-gallery-container" style={{ minHeight: '400px' }}>
-              <ImageGallery />
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Testimonials */}
       <section className="py-24">
