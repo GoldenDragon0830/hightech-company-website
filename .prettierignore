@@ -1,0 +1,9 @@
+node_modules
+dist
+package-lock.json
+playwright-report
+test-results
+artifacts
+*.tsbuildinfo
+# Retain the generated shadcn primitive formatting.
+src/components/ui

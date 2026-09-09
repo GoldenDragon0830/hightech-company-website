@@ -6,7 +6,11 @@ import ContactPage from '@/pages/ContactPage';
 import { contactSchema, createContactDraft } from '@/lib/contact';
 
 function renderContact() {
-  return render(<MemoryRouter><ContactPage /></MemoryRouter>);
+  return render(
+    <MemoryRouter>
+      <ContactPage />
+    </MemoryRouter>,
+  );
 }
 
 async function fillBrief(user: ReturnType<typeof userEvent.setup>) {
@@ -42,36 +46,63 @@ describe('contact draft workflow', () => {
   it('does not report an earlier clipboard operation as success for an edited draft', async () => {
     const user = userEvent.setup();
     let resolveCopy!: () => void;
-    vi.spyOn(navigator.clipboard, 'writeText').mockImplementation(() => new Promise<void>((resolve) => { resolveCopy = resolve; }));
+    vi.spyOn(navigator.clipboard, 'writeText').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveCopy = resolve;
+        }),
+    );
     renderContact();
     await fillBrief(user);
     await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
     await user.click(screen.getByRole('button', { name: 'Copy briefing' }));
     await user.click(screen.getByRole('button', { name: 'Edit brief' }));
-    fireEvent.change(screen.getByLabelText(/^Project brief/), { target: { value: 'A different brief for a different product.' } });
+    fireEvent.change(screen.getByLabelText(/^Project brief/), {
+      target: { value: 'A different brief for a different product.' },
+    });
     await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
-    await act(async () => { resolveCopy(); });
+    await act(async () => {
+      resolveCopy();
+    });
     expect(screen.getByRole('status')).toBeEmptyDOMElement();
   });
 
   it('shows verified contact routes, clear data handling and native disclosure FAQs', async () => {
     const user = userEvent.setup();
     renderContact();
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Good work starts with a conversation.');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Good work starts with a conversation.',
+    );
     expect(screen.queryByRole('main')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'contact@hightech.fit' })).toHaveAttribute('href', 'mailto:contact@hightech.fit');
-    expect(screen.getByRole('link', { name: '+1 (540) 952-9270' })).toHaveAttribute('href', 'tel:+15409529270');
+    expect(screen.getByRole('link', { name: 'contact@hightech.fit' })).toHaveAttribute(
+      'href',
+      'mailto:contact@hightech.fit',
+    );
+    expect(screen.getByRole('link', { name: '+1 (540) 952-9270' })).toHaveAttribute(
+      'href',
+      'tel:+15409529270',
+    );
     expect(screen.getByText('24 East Clairmont Drive, Newark, DE 19702')).toBeVisible();
-    expect(screen.getByRole('link', { name: /Schedule a conversation/ })).toHaveAttribute('href', 'https://calendly.com/goldendragon0830-hightech/30min');
-    expect(screen.getByRole('link', { name: /Explore our services/ })).toHaveAttribute('href', '/services');
-    expect(screen.getByText(/This form does not send or save your details to a server/)).toBeVisible();
+    expect(screen.getByRole('link', { name: /Schedule a conversation/ })).toHaveAttribute(
+      'href',
+      'https://calendly.com/goldendragon0830-hightech/30min',
+    );
+    expect(screen.getByRole('link', { name: /Explore our services/ })).toHaveAttribute(
+      'href',
+      '/services',
+    );
+    expect(
+      screen.getByText(/This form does not send or save your details to a server/),
+    ).toBeVisible();
     expect(screen.getByText(/Do not include passwords/)).toBeVisible();
     const summary = screen.getByText('Can I attach files?');
     // JSDOM does not implement native summary keyboard activation; browser QA covers Enter.
     await user.click(summary);
     expect(summary.closest('details')).toHaveAttribute('open');
     expect(screen.getByText(/Add attachments in your email app/)).toBeVisible();
-    expect(screen.queryByText(/SOC 2 compliant|reply within 24 hours|San Francisco|London/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/SOC 2 compliant|reply within 24 hours|San Francisco|London/),
+    ).not.toBeInTheDocument();
   });
 
   it('keeps a long Unicode brief intact in the copy fallback rather than an oversized mailto URL', async () => {
@@ -85,12 +116,24 @@ describe('contact draft workflow', () => {
     const href = screen.getByRole('link', { name: 'Open email app' }).getAttribute('href')!;
     expect(href.length).toBeLessThanOrEqual(1800);
     expect(new URL(href).searchParams.has('body')).toBe(false);
-    expect((screen.getByRole('textbox', { name: 'Email briefing' }) as HTMLTextAreaElement).value).toContain(message);
+    expect(
+      (screen.getByRole('textbox', { name: 'Email briefing' }) as HTMLTextAreaElement).value,
+    ).toContain(message);
   });
 
   it('encodes email body data without allowing extra mail headers, even with malformed Unicode', () => {
     const message = 'Portal needs: A&B? #1 + 日本語\n&bcc=other@example.com \ud800';
-    const draft = createContactDraft({ name: 'Ada', email: 'ada+studio@example.com', company: '', topic: 'Web application', budget: '', message }, 'contact@hightech.fit');
+    const draft = createContactDraft(
+      {
+        name: 'Ada',
+        email: 'ada+studio@example.com',
+        company: '',
+        topic: 'Web application',
+        budget: '',
+        message,
+      },
+      'contact@hightech.fit',
+    );
     const mail = new URL(draft.href);
     expect([...mail.searchParams.keys()]).toEqual(['subject', 'body']);
     expect(mail.searchParams.get('body')).toContain('ada+studio@example.com');
@@ -122,7 +165,15 @@ describe('contact draft workflow', () => {
     ['topic', 'Invented topic'],
     ['budget', 'Invented budget'],
   ])('rejects invalid %s values before drafting', (field, value) => {
-    const result = contactSchema.safeParse({ name: 'Ada', email: 'ada@example.com', company: '', topic: 'Web application', budget: '', message: 'A customer portal for our existing product.', [field]: value });
+    const result = contactSchema.safeParse({
+      name: 'Ada',
+      email: 'ada@example.com',
+      company: '',
+      topic: 'Web application',
+      budget: '',
+      message: 'A customer portal for our existing product.',
+      [field]: value,
+    });
     expect(result.success).toBe(false);
   });
 
@@ -138,7 +189,9 @@ describe('contact draft workflow', () => {
     await user.selectOptions(budget, '$25,000–$50,000');
     await user.selectOptions(screen.getByLabelText(/^Topic/), 'AI & automation');
     await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
-    const mail = new URL(screen.getByRole('link', { name: 'Open email app' }).getAttribute('href')!);
+    const mail = new URL(
+      screen.getByRole('link', { name: 'Open email app' }).getAttribute('href')!,
+    );
     expect(mail.searchParams.get('subject')).toBe('Project enquiry — AI & automation');
     expect(mail.searchParams.get('body')).toContain('Company: Lovelace & Co.');
     expect(mail.searchParams.get('body')).toContain('Budget: $25,000–$50,000');
@@ -159,27 +212,38 @@ describe('contact draft workflow', () => {
     await user.clear(message);
     await user.type(message, 'Updated brief: improve our existing portal.');
     await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
-    expect((screen.getByRole('textbox', { name: 'Email briefing' }) as HTMLTextAreaElement).value).toContain('Updated brief: improve our existing portal.');
+    expect(
+      (screen.getByRole('textbox', { name: 'Email briefing' }) as HTMLTextAreaElement).value,
+    ).toContain('Updated brief: improve our existing portal.');
     expect(screen.getByRole('status')).toBeEmptyDOMElement();
   });
 
-  it.each(['denied', 'unavailable'] as const)('offers selectable text when clipboard is %s', async (mode) => {
-    const user = userEvent.setup();
-    if (mode === 'denied') vi.spyOn(navigator.clipboard, 'writeText').mockRejectedValue(new Error('Permission denied'));
-    else vi.spyOn(navigator, 'clipboard', 'get').mockReturnValue(undefined as unknown as Clipboard);
-    renderContact();
-    await fillBrief(user);
-    await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
-    await user.click(screen.getByRole('button', { name: 'Copy briefing' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Automatic copy is unavailable');
-    expect(screen.getByRole('status')).not.toHaveTextContent('Briefing copied');
-    await user.click(screen.getByRole('button', { name: 'Select briefing text' }));
-    const preview = screen.getByRole('textbox', { name: 'Email briefing' }) as HTMLTextAreaElement;
-    expect(preview).toHaveFocus();
-    expect(preview.selectionStart).toBe(0);
-    expect(preview.selectionEnd).toBe(preview.value.length);
-    expect(screen.getByRole('link', { name: 'Open email app' })).toBeVisible();
-  });
+  it.each(['denied', 'unavailable'] as const)(
+    'offers selectable text when clipboard is %s',
+    async (mode) => {
+      const user = userEvent.setup();
+      if (mode === 'denied')
+        vi.spyOn(navigator.clipboard, 'writeText').mockRejectedValue(
+          new Error('Permission denied'),
+        );
+      else
+        vi.spyOn(navigator, 'clipboard', 'get').mockReturnValue(undefined as unknown as Clipboard);
+      renderContact();
+      await fillBrief(user);
+      await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
+      await user.click(screen.getByRole('button', { name: 'Copy briefing' }));
+      expect(await screen.findByRole('alert')).toHaveTextContent('Automatic copy is unavailable');
+      expect(screen.getByRole('status')).not.toHaveTextContent('Briefing copied');
+      await user.click(screen.getByRole('button', { name: 'Select briefing text' }));
+      const preview = screen.getByRole('textbox', {
+        name: 'Email briefing',
+      }) as HTMLTextAreaElement;
+      expect(preview).toHaveFocus();
+      expect(preview.selectionStart).toBe(0);
+      expect(preview.selectionEnd).toBe(preview.value.length);
+      expect(screen.getByRole('link', { name: 'Open email app' })).toBeVisible();
+    },
+  );
 
   it('copies a complete briefing without claiming email delivery', async () => {
     const user = userEvent.setup();
@@ -193,7 +257,9 @@ describe('contact draft workflow', () => {
     expect(copy).toHaveBeenCalledWith((preview as HTMLTextAreaElement).value);
     expect(copy.mock.calls[0][0]).toContain('To: contact@hightech.fit');
     expect(copy.mock.calls[0][0]).toContain('Subject: Project enquiry — Web application');
-    expect(screen.getByRole('status')).toHaveTextContent('Briefing copied. Paste it into your email app, then press Send.');
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Briefing copied. Paste it into your email app, then press Send.',
+    );
     expect(screen.getByText(/Nothing has been sent/)).toBeVisible();
   });
 
@@ -206,9 +272,13 @@ describe('contact draft workflow', () => {
     expect(name).toHaveFocus();
     expect(name).toHaveAttribute('aria-invalid', 'true');
     expect(name).toHaveAccessibleDescription('Enter your name.');
-    expect(screen.getByLabelText(/^Email address/)).toHaveAccessibleDescription('Enter a valid email address.');
+    expect(screen.getByLabelText(/^Email address/)).toHaveAccessibleDescription(
+      'Enter a valid email address.',
+    );
     expect(screen.getByLabelText(/^Topic/)).toHaveAccessibleDescription('Choose a topic.');
-    expect(screen.getByLabelText(/^Project brief/)).toHaveAccessibleDescription(/Tell us a little about your project/);
+    expect(screen.getByLabelText(/^Project brief/)).toHaveAccessibleDescription(
+      /Tell us a little about your project/,
+    );
     expect(screen.queryByRole('link', { name: 'Open email app' })).not.toBeInTheDocument();
     await fillBrief(user);
     await user.click(screen.getByRole('button', { name: 'Prepare email draft' }));
@@ -226,13 +296,17 @@ describe('contact draft workflow', () => {
     expect(screen.getByRole('heading', { name: 'Your draft is ready' })).toBeVisible();
     expect(screen.getByText(/Nothing has been sent/)).toBeVisible();
     expect(screen.queryByText(/Message Sent!/i)).not.toBeInTheDocument();
-    const mail = new URL(screen.getByRole('link', { name: 'Open email app' }).getAttribute('href')!);
+    const mail = new URL(
+      screen.getByRole('link', { name: 'Open email app' }).getAttribute('href')!,
+    );
     expect(mail.protocol).toBe('mailto:');
     expect(mail.pathname).toBe('contact@hightech.fit');
     expect(mail.searchParams.get('subject')).toBe('Project enquiry — Web application');
     expect(mail.searchParams.get('body')).toContain('Ada Lovelace');
     expect(mail.searchParams.get('body')).toContain('ada@example.com');
     expect(mail.searchParams.get('body')).toContain('Budget: Not specified');
-    expect(mail.searchParams.get('body')).toContain('We need an accessible customer portal. Target launch: autumn.');
+    expect(mail.searchParams.get('body')).toContain(
+      'We need an accessible customer portal. Target launch: autumn.',
+    );
   });
 });

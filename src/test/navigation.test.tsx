@@ -7,7 +7,11 @@ import Header from '@/components/layout/Header';
 describe('site navigation', () => {
   it('provides real page URLs and a persistent motion pause control', async () => {
     localStorage.clear();
-    render(<MemoryRouter><Header /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>,
+    );
     expect(screen.getByRole('link', { name: 'Services' })).toHaveAttribute('href', '/services');
     await userEvent.click(screen.getByRole('button', { name: 'Pause animations' }));
     expect(document.documentElement).toHaveAttribute('data-motion', 'paused');

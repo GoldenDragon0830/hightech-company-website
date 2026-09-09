@@ -1,53 +1,42 @@
-# Editing the sample team
+# Editing the five-person team
 
-The five cards on the homepage and About page use **one content source**: `src/data/team.json`. The names, roles, biographies, skills, and avatars are fictional samples—not claims about actual HighTech personnel. Every card is labeled **Sample profile**, with a disclosure above the group. No social accounts are supplied or implied.
+The homepage and About page share **`src/data/team.json`**. Exactly five profiles are required, including a `Founder & CEO`. Array order determines display order; the first card is featured on the About page.
 
-## Make a content edit
+## Replace samples with your actual team
 
-1. Open `src/data/team.json` and edit the existing five objects. Array order controls display order; keep the Founder & CEO first for the featured About card.
-2. Use ordinary JSON: double-quoted strings, no comments, no trailing commas. Keep exactly five members, unique `id` values, and at least one role spelled `Founder & CEO`.
-3. Keep `isSample: true`. Do not add invented employers, schools, awards, years of experience, clients, or performance figures.
-4. Keep avatar assets in `public/avatars/`, referring to them as `/avatars/filename.svg` in the JSON. The provided SVGs are original geometric illustrations in sage, clay, sand, slate, and mauve. They are not photographs or likenesses of actual people. Preserve that distinction in replacements.
-5. Run `npx vitest run src/test/team.test.tsx`, then `npm run typecheck`. Preview `/about` and `/` on desktop and a narrow mobile viewport. Run the full project checks before deployment.
+1. Edit each member’s `name`, `role`, `bio`, and `skills` in the JSON. Use approved, truthful details.
+2. Add their approved portrait to `public/avatars/`, and set `avatar` to `/avatars/their-name.webp` (SVG, WebP, AVIF, PNG, JPG and JPEG are supported). Use lowercase, hyphenated filenames.
+3. Once a profile’s name, biography and image are real and approved, set **`isSample: false`**. Its sample badge disappears automatically; when all five are real, the section-wide sample notice disappears too. Leave fictional profiles marked `true`.
+4. Optionally add approved social links, or omit `socials` completely. Blank URLs render nothing. Nonblank URLs must be credential-free `https://` URLs.
+5. Run `npm test`, `npm run typecheck`, and `npm run build`; commit and push to redeploy.
 
-Edits are code content changes, not a live CMS. A production site needs a rebuild and redeployment before visitors see changes.
+```json
+{
+  "id": "founder",
+  "name": "Your approved public name",
+  "role": "Founder & CEO",
+  "bio": "A short, factual description of your focus and responsibilities.",
+  "skills": ["Product strategy", "Software engineering"],
+  "avatar": "/avatars/founder.webp",
+  "isSample": false,
+  "socials": [{ "label": "GitHub", "url": "" }]
+}
+```
 
-## Schema contract
+Keep five objects in the top-level array. IDs must be unique lowercase hyphenated identifiers. Do not add invented employers, awards, education, years of experience, clients or performance metrics.
 
-`src/lib/team.ts` exports `teamMemberSchema`, `teamSchema`, `TeamMember`, `teamMembers`, and `isHttpsUrl`. Zod validates the JSON when the content module is imported. Invalid edits fail with a field-path validation error; they are not silently substituted with different people. The tests exercise the import boundary, so run them before publishing. A Vite build alone does not execute this runtime validation.
+## Validation
 
-| Field | Contract |
-| --- | --- |
-| `id` | Required; 1–64 characters; lowercase letters/digits separated by single hyphens; unique across the team. |
-| `name` | Required nonblank string; at most 80 characters. |
-| `role` | Required nonblank string; at most 80 characters. At least one member must be `Founder & CEO`. |
-| `bio` | Required nonblank string; at most 500 characters. One or two useful sentences recommended. |
-| `skills` | Required array of 1–6 nonblank strings, each at most 52 characters. Use distinct labels. |
-| `avatar` | Required local SVG URL matching `/avatars/lowercase-hyphenated-name.svg`. No remote images or parent-directory paths. The file must exist under `public/avatars/`; tests check each supplied asset. |
-| `isSample` | Required literal `true`. The sample-only contract deliberately prevents silently relabeling fictional people as real employees. |
-| `socials` | Optional array of up to 3 `{ "label": "…", "url": "…" }` objects. Labels must be nonblank and at most 32 characters. |
+`src/lib/team.ts` validates JSON with Zod when imported. Names/roles are nonblank strings up to 80 characters; bios up to 500; skills 1–6 strings up to 52 characters. Unknown fields, unsafe social URLs and parent-directory image paths are rejected. There must be exactly five members and at least one role spelled `Founder & CEO`.
 
-Unknown fields are rejected rather than ignored. Text is not interpreted as HTML. Values and identifiers are preserved, not silently normalized.
+Local image paths must point to an existing file in `public/avatars/`. Changing JSON requires a build/deployment; this is not a remote CMS. Tests validate the content boundary, so run them before publishing. A Vite build alone does not execute runtime validation.
 
-## Optional social links
-
-Omit `socials` or use `[]` when no verified link is available. A blank URL (`"url": ""`) is accepted as an editorial placeholder and produces **no anchor, icon, or empty social row**. Nonblank URLs must be explicit `https://` URLs without embedded credentials or surrounding whitespace. HTTP, `#`, `javascript:`, relative paths, and malformed URLs fail validation.
-
-Only add a link the profile owner has approved. Do not put a plausible-looking social account on a fictional sample. Valid links open in a new tab with `rel="noopener noreferrer"` and an accessible name that identifies the person, destination label, and new-tab behavior. The card also filters unsafe URLs defensively if consumed independently of the JSON loader.
-
-## Reusing the section
+## Components
 
 ```tsx
 import TeamSection from '@/components/team/TeamSection';
-
-<TeamSection />         // Featured first profile, then a two-column team grid.
-<TeamSection compact /> // Denser homepage composition; still all five complete profiles.
+<TeamSection />         // Featured founder + remaining people
+<TeamSection compact /> // Homepage composition, all five profiles
 ```
 
-Both modes include the names, roles, biographies, skill tags, local illustrations, and sample disclosure. The component imports its own `src/styles/team.css`, uses the shared `paper-section`, `shell`, typography, tag, and link contracts, and has no required props. `TeamCard` is separately reusable with a validated `TeamMember`.
-
-To replace the sample team with actual personnel, first obtain approved names, biographies, avatar/portrait rights, and optional social URLs. Then deliberately review the sample-only schema, disclosure, image alternative text, and badge together. Do not remove the warning while any fictional identity remains.
-
-## Tests
-
-`src/test/team.test.tsx` covers the five-profile requirement, complete JSON-driven cards in both modes, local SVG availability, required fields and unsafe edits, sample labeling, optional HTTPS socials, unique accessible IDs across repeated sections, and the About page's real route links and single-heading/no-nested-main contract.
+Both variants include role, biography, skills, avatar, optional social links, conditional sample labeling, and accessible unique IDs. The provided illustrations are original geometric avatars, not photographs or likenesses of actual people.

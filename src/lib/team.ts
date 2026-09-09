@@ -5,37 +5,69 @@ import teamData from '@/data/team.json';
 export function isHttpsUrl(value: string): boolean {
   try {
     const url = new URL(value);
-    return value.startsWith('https://') && value === value.trim()
-      && url.protocol === 'https:' && Boolean(url.hostname)
-      && !url.username && !url.password;
+    return (
+      value.startsWith('https://') &&
+      value === value.trim() &&
+      url.protocol === 'https:' &&
+      Boolean(url.hostname) &&
+      !url.username &&
+      !url.password
+    );
   } catch {
     return false;
   }
 }
 
-const contentText = (max: number) => z.string().min(1).max(max)
-  .refine((value) => value.trim().length > 0, 'Text cannot be blank.');
+const contentText = (max: number) =>
+  z
+    .string()
+    .min(1)
+    .max(max)
+    .refine((value) => value.trim().length > 0, 'Text cannot be blank.');
 
-const socialSchema = z.object({
-  label: contentText(32),
-  url: z.union([z.literal(''), z.string().url().refine(isHttpsUrl, 'Social URLs must use HTTPS without credentials.')]),
-}).strict();
+const socialSchema = z
+  .object({
+    label: contentText(32),
+    url: z.union([
+      z.literal(''),
+      z.string().url().refine(isHttpsUrl, 'Social URLs must use HTTPS without credentials.'),
+    ]),
+  })
+  .strict();
 
-export const teamMemberSchema = z.object({
-  id: z.string().min(1).max(64).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use a lowercase hyphenated identifier.'),
-  name: contentText(80),
-  role: contentText(80),
-  bio: contentText(500),
-  skills: z.array(contentText(52)).min(1).max(6),
-  avatar: z.string().regex(/^\/avatars\/[a-z0-9]+(?:-[a-z0-9]+)*\.svg$/, 'Use a local SVG path inside /avatars/.'),
-  isSample: z.literal(true),
-  socials: z.array(socialSchema).max(3).optional(),
-}).strict();
+export const teamMemberSchema = z
+  .object({
+    id: z
+      .string()
+      .min(1)
+      .max(64)
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Use a lowercase hyphenated identifier.'),
+    name: contentText(80),
+    role: contentText(80),
+    bio: contentText(500),
+    skills: z.array(contentText(52)).min(1).max(6),
+    avatar: z
+      .string()
+      .regex(
+        /^\/avatars\/[a-z0-9]+(?:-[a-z0-9]+)*\.(?:svg|webp|avif|png|jpg|jpeg)$/,
+        'Use a local image path inside /avatars/.',
+      ),
+    isSample: z.boolean(),
+    socials: z.array(socialSchema).max(3).optional(),
+  })
+  .strict();
 
-export const teamSchema = z.array(teamMemberSchema)
+export const teamSchema = z
+  .array(teamMemberSchema)
   .length(5, 'The team must contain exactly five members.')
-  .refine((members) => new Set(members.map((member) => member.id)).size === members.length, 'Member identifiers must be unique.')
-  .refine((members) => members.some((member) => member.role === 'Founder & CEO'), 'Include a Founder & CEO.');
+  .refine(
+    (members) => new Set(members.map((member) => member.id)).size === members.length,
+    'Member identifiers must be unique.',
+  )
+  .refine(
+    (members) => members.some((member) => member.role === 'Founder & CEO'),
+    'Include a Founder & CEO.',
+  );
 
 export type TeamMember = z.infer<typeof teamMemberSchema>;
 

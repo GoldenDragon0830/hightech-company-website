@@ -5,11 +5,7 @@
     "category": "AI systems",
     "domain": "Healthcare workflows",
     "description": "What if a document workspace made the source as easy to find as the answer? A concept for reviewing operational knowledge, with people in control.",
-    "tags": [
-      "Knowledge search",
-      "Source references",
-      "Human review"
-    ],
+    "tags": ["Knowledge search", "Source references", "Human review"],
     "art": "signal",
     "artLabel": "SIGNAL / SOURCE",
     "question": "Can an assistant make operational documents easier to navigate without hiding uncertainty?",
@@ -22,11 +18,7 @@
     "category": "Web apps",
     "domain": "Commerce & retail",
     "description": "An exploration of the space between a growing product catalogue and a simple shopping experience. Less hunting, clearer choices.",
-    "tags": [
-      "Product discovery",
-      "Catalogue systems",
-      "Web experience"
-    ],
+    "tags": ["Product discovery", "Catalogue systems", "Web experience"],
     "art": "shelf",
     "artLabel": "ORDER / DISCOVERY",
     "question": "Can a complex catalogue feel approachable without concealing the details people need?",
@@ -39,11 +31,7 @@
     "category": "AI systems",
     "domain": "Finance & operations",
     "description": "A concept for an evidence-first document review workspace. Connect the source, the suggestion, and the person responsible for the decision.",
-    "tags": [
-      "Document workflows",
-      "Audit trails",
-      "AI assistance"
-    ],
+    "tags": ["Document workflows", "Audit trails", "AI assistance"],
     "art": "trace",
     "artLabel": "CONTEXT / CONNECTION",
     "question": "What would it take to make every suggested document action traceable to its evidence?",
@@ -56,11 +44,7 @@
     "category": "Web apps",
     "domain": "Education & learning",
     "description": "A quieter place to learn. This concept looks at how a course can give learners a clear next step without taking away their freedom to explore.",
-    "tags": [
-      "Learning experience",
-      "Content navigation",
-      "Accessibility"
-    ],
+    "tags": ["Learning experience", "Content navigation", "Accessibility"],
     "art": "pages",
     "artLabel": "STRUCTURE / POSSIBILITY",
     "question": "How can learners find their next step without being forced down a single path?",
@@ -73,11 +57,7 @@
     "category": "Mobile apps",
     "domain": "Manufacturing & field work",
     "description": "A mobile inspection notebook concept for work that happens away from a desk, where weak connectivity should not erase a useful observation.",
-    "tags": [
-      "Field workflows",
-      "Offline-first thinking",
-      "Mobile UX"
-    ],
+    "tags": ["Field workflows", "Offline-first thinking", "Mobile UX"],
     "art": "stack",
     "artLabel": "OBSERVE / CONTINUE",
     "question": "How can a field observation stay useful when connectivity comes and goes?",
@@ -90,11 +70,7 @@
     "category": "Mobile apps",
     "domain": "Logistics & supply chain",
     "description": "An exploration of delivery handovers and exceptions. Keep the next action visible while leaving dispatchers room to handle the unexpected.",
-    "tags": [
-      "Delivery operations",
-      "Exception handling",
-      "Mobile experience"
-    ],
+    "tags": ["Delivery operations", "Exception handling", "Mobile experience"],
     "art": "routes",
     "artLabel": "MOVEMENT / DIRECTION",
     "question": "Can delivery exceptions become understandable next actions instead of another stream of alerts?",
