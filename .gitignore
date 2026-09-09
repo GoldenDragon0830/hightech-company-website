@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+*.tsbuildinfo
+.env.*
+!.env.example
+.vercel/
+playwright-report/
+test-results/
+artifacts/
 .env
 
 # Editor directories and files

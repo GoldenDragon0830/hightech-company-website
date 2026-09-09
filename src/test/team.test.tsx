@@ -1,0 +1,111 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { render, screen, within } from '@testing-library/react';
+import TeamSection from '@/components/team/TeamSection';
+import team from '@/data/team.json';
+import { MemoryRouter } from 'react-router-dom';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import AboutPage from '@/pages/AboutPage';
+import { teamMembers, teamSchema } from '@/lib/team';
+import TeamCard from '@/components/team/TeamCard';
+
+it('renders only populated HTTPS social links with descriptive accessible names', () => {
+  render(<TeamCard member={{ ...teamMembers[0], socials: [
+    { label: 'Website', url: 'https://example.com/rowan' },
+    { label: 'LinkedIn', url: '' },
+    { label: 'Unsafe', url: 'javascript:alert(1)' },
+    { label: 'Insecure', url: 'http://example.com/rowan' },
+  ] }} />);
+  expect(screen.queryAllByRole('link')).toHaveLength(1);
+  const link = screen.getByRole('link', { name: 'Rowan Ellis on Website (opens in a new tab)' });
+  expect(link).toHaveAttribute('href', 'https://example.com/rowan');
+  expect(link).toHaveAttribute('target', '_blank');
+  expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+});
+
+const invalidMemberEdits: [string, Record<string, unknown>][] = [
+  ['blank name', { name: '   ' }],
+  ['missing role', { role: undefined }],
+  ['blank biography', { bio: '' }],
+  ['unsafe identifier', { id: '../person' }],
+  ['empty skills', { skills: [] }],
+  ['blank skill', { skills: [' '] }],
+  ['remote avatar', { avatar: 'https://example.com/person.jpg' }],
+  ['traversal avatar', { avatar: '/avatars/../person.svg' }],
+  ['missing sample flag', { isSample: undefined }],
+  ['unknown field', { employer: 'Unverified company' }],
+  ['insecure social link', { socials: [{ label: 'Website', url: 'http://example.com' }] }],
+  ['executable social link', { socials: [{ label: 'Website', url: 'javascript:alert(1)' }] }],
+  ['credential-bearing social link', { socials: [{ label: 'Website', url: 'https://user:password@example.com' }] }],
+];
+
+describe('Team JSON validation', () => {
+  it.each(invalidMemberEdits)('rejects %s', (_name, edit) => {
+    expect(teamSchema.safeParse([{ ...team[0], ...edit }, ...team.slice(1)]).success).toBe(false);
+  });
+
+  it('rejects duplicate member identifiers', () => {
+    expect(teamSchema.safeParse([team[0], { ...team[1], id: team[0].id }, ...team.slice(2)]).success).toBe(false);
+  });
+
+  it('requires a Founder & CEO in the five-person team', () => {
+    expect(teamSchema.safeParse([{ ...team[0], role: 'Engineer' }, ...team.slice(1)]).success).toBe(false);
+  });
+
+  it('accepts the shipped five sample profiles', () => {
+    expect(teamSchema.safeParse(team).success).toBe(true);
+    expect(team.every((member) => member.isSample)).toBe(true);
+  });
+});
+
+describe('About page', () => {
+  it('offers an editorial introduction with real service, careers, and contact routes', () => {
+    const { container } = render(<MemoryRouter><AboutPage /></MemoryRouter>);
+    expect(screen.queryAllByRole('heading', { level: 1, name: /Small team\. Serious craft\./i })).toHaveLength(1);
+    expect(screen.getByRole('heading', { name: 'Software should earn its place.' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: /Less ceremony\. More shared understanding\./i })).toBeVisible();
+    expect(screen.getByRole('link', { name: /Explore our capabilities/i })).toHaveAttribute('href', '/services');
+    expect(screen.getByRole('link', { name: /Connect with the team/i })).toHaveAttribute('href', '/careers');
+    expect(screen.getByRole('link', { name: /Start a conversation/i })).toHaveAttribute('href', '/contact');
+    expect(container.querySelector('main')).toBeNull();
+    expect(screen.queryByText(/Company Timeline|120\+|500\+|Fortune 500|Former Google|MIT|Wharton/)).not.toBeInTheDocument();
+  });
+});
+
+describe('About team', () => {
+  it('keeps accessible heading references unique when reused on the same page', () => {
+    const { container } = render(<MemoryRouter><TeamSection /><TeamSection compact /></MemoryRouter>);
+    const ids = Array.from(container.querySelectorAll('[id]'), (element) => element.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  afterEach(() => { vi.doUnmock('@/data/team.json'); vi.resetModules(); });
+
+  it('rejects a JSON edit that removes one of the required five members', async () => {
+    vi.resetModules();
+    vi.doMock('@/data/team.json', () => ({ default: team.slice(0, 4) }));
+    await expect(import('@/components/team/TeamSection')).rejects.toThrow(/exactly five/i);
+  });
+  it.each([false, true])('renders all five complete JSON profiles (compact=%s)', (compact) => {
+    render(<MemoryRouter><TeamSection compact={compact} /></MemoryRouter>);
+    expect(screen.getAllByRole('article')).toHaveLength(5);
+    expect(screen.getByText('Founder & CEO')).toBeVisible();
+    for (const member of team) {
+      const card = within(screen.getByRole('article', { name: member.name }));
+      expect(card.getByText(member.bio)).toBeVisible();
+      for (const skill of member.skills) expect(card.getByText(skill)).toBeVisible();
+      const avatar = card.getByRole('img', { name: `Abstract illustrated avatar for ${member.name} (sample profile)` });
+      expect(avatar).toHaveAttribute('src', member.avatar);
+      expect(avatar).toHaveAttribute('loading', 'lazy');
+      expect(member.avatar).toMatch(/^\/avatars\/[a-z0-9-]+\.svg$/);
+      const avatarPath = resolve(process.cwd(), 'public', member.avatar.slice(1));
+      expect(existsSync(avatarPath)).toBe(true);
+      expect(readFileSync(avatarPath, 'utf8')).toContain('<svg');
+      expect(card.queryAllByRole('link')).toHaveLength(0);
+    }
+  });
+  it('identifies exactly five profiles as sample content', () => {
+    render(<MemoryRouter><AboutPage /></MemoryRouter>);
+    expect(screen.queryAllByText('Sample profile')).toHaveLength(5);
+  });
+});

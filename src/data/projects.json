@@ -1,0 +1,104 @@
+[
+  {
+    "id": "fieldnote",
+    "title": "Fieldnote",
+    "category": "AI systems",
+    "domain": "Healthcare workflows",
+    "description": "What if a document workspace made the source as easy to find as the answer? A concept for reviewing operational knowledge, with people in control.",
+    "tags": [
+      "Knowledge search",
+      "Source references",
+      "Human review"
+    ],
+    "art": "signal",
+    "artLabel": "SIGNAL / SOURCE",
+    "question": "Can an assistant make operational documents easier to navigate without hiding uncertainty?",
+    "approach": "Explore source-linked answers, explicit unknowns, and a review queue rather than autonomous clinical decisions.",
+    "validation": "Use synthetic or approved non-sensitive documents for a prototype. Confirm consent, access controls, retrieval quality, and the boundary between operations and clinical care."
+  },
+  {
+    "id": "shelf",
+    "title": "Shelf",
+    "category": "Web apps",
+    "domain": "Commerce & retail",
+    "description": "An exploration of the space between a growing product catalogue and a simple shopping experience. Less hunting, clearer choices.",
+    "tags": [
+      "Product discovery",
+      "Catalogue systems",
+      "Web experience"
+    ],
+    "art": "shelf",
+    "artLabel": "ORDER / DISCOVERY",
+    "question": "Can a complex catalogue feel approachable without concealing the details people need?",
+    "approach": "Explore a clear taxonomy, useful comparisons, and a path from product discovery to an existing checkout.",
+    "validation": "Validate the product data model and accessibility with representative shopping tasks. A concept cannot establish conversion improvements or payment compliance."
+  },
+  {
+    "id": "trace",
+    "title": "Trace",
+    "category": "AI systems",
+    "domain": "Finance & operations",
+    "description": "A concept for an evidence-first document review workspace. Connect the source, the suggestion, and the person responsible for the decision.",
+    "tags": [
+      "Document workflows",
+      "Audit trails",
+      "AI assistance"
+    ],
+    "art": "trace",
+    "artLabel": "CONTEXT / CONNECTION",
+    "question": "What would it take to make every suggested document action traceable to its evidence?",
+    "approach": "Explore a side-by-side source viewer, reviewable suggestions, and explicit approval states.",
+    "validation": "Evaluate with permissioned sample documents and domain reviewers. Check failure cases, audit requirements, and retention rules before choosing any AI approach."
+  },
+  {
+    "id": "openbook",
+    "title": "Openbook",
+    "category": "Web apps",
+    "domain": "Education & learning",
+    "description": "A quieter place to learn. This concept looks at how a course can give learners a clear next step without taking away their freedom to explore.",
+    "tags": [
+      "Learning experience",
+      "Content navigation",
+      "Accessibility"
+    ],
+    "art": "pages",
+    "artLabel": "STRUCTURE / POSSIBILITY",
+    "question": "How can learners find their next step without being forced down a single path?",
+    "approach": "Explore a map of course content, legible progress, and room for instructor feedback.",
+    "validation": "Test navigation with learners and educators, including assistive technology users. Do not infer learning outcomes from interface engagement alone."
+  },
+  {
+    "id": "shift",
+    "title": "Shift",
+    "category": "Mobile apps",
+    "domain": "Manufacturing & field work",
+    "description": "A mobile inspection notebook concept for work that happens away from a desk, where weak connectivity should not erase a useful observation.",
+    "tags": [
+      "Field workflows",
+      "Offline-first thinking",
+      "Mobile UX"
+    ],
+    "art": "stack",
+    "artLabel": "OBSERVE / CONTINUE",
+    "question": "How can a field observation stay useful when connectivity comes and goes?",
+    "approach": "Explore local drafts, photo annotations, clear sync states, and an explicit handover to the next person.",
+    "validation": "Validate device support, data conflict rules, storage security, and real field conditions. Offline reliability needs device testing, not just a prototype."
+  },
+  {
+    "id": "wayline",
+    "title": "Wayline",
+    "category": "Mobile apps",
+    "domain": "Logistics & supply chain",
+    "description": "An exploration of delivery handovers and exceptions. Keep the next action visible while leaving dispatchers room to handle the unexpected.",
+    "tags": [
+      "Delivery operations",
+      "Exception handling",
+      "Mobile experience"
+    ],
+    "art": "routes",
+    "artLabel": "MOVEMENT / DIRECTION",
+    "question": "Can delivery exceptions become understandable next actions instead of another stream of alerts?",
+    "approach": "Explore an exception-first task view, a shared handover note, and dispatcher-controlled updates.",
+    "validation": "Confirm location permissions, map licensing, connectivity, and existing dispatch integrations. Route efficiency and ETA accuracy are questions to test, not promised results."
+  }
+]
